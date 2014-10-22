@@ -1,6 +1,6 @@
 "use strict";
 
-var lineStuff = require("./one-line-to-two");
+// var lineStuff = require("./one-line-to-two");
 
 var oldLine = [
   [40.804333509877324, -96.71869092620909],
@@ -3812,8 +3812,8 @@ var oldLine = [
   [41.039270125329494, -96.35715756565332]
 ];
 
-console.log("old line has length: " + oldLine.length);
-var ml = new lineStuff.MapLine(oldLine);
-// console.log("above line has length: " + JSON.stringify(ml.doublePoints));
-console.log("above line has length: " + ml.aboveLinePoints.length);
-console.log("above line has length: " + ml.belowLinePoints.length);
+// console.log("old line has length: " + oldLine.length);
+// var ml = new lineStuff.MapLine(oldLine);
+// // console.log("above line has length: " + JSON.stringify(ml.doublePoints));
+// console.log("above line has length: " + ml.aboveLinePoints.length);
+// console.log("above line has length: " + ml.belowLinePoints.length);
