@@ -34,8 +34,8 @@ console.log("index: " + ml.belowLinePoints.length)
       // Defining a polygon here instead of a polyline will connect the
       // endpoints and fill the path.
       // http://leafletjs.com/reference.html#polygon
-      var aboveLine = L.polygon(ml.aboveLinePoints, polyline_options);
-      var belowLine = L.polygon(ml.belowLinePoints, polyline_options);
+      var aboveLine = L.polyline(ml.aboveLinePoints, polyline_options);
+      var belowLine = L.polyline(ml.belowLinePoints, polyline_options);
       aboveLine.addTo(map);
       belowLine.addTo(map);
     </script>

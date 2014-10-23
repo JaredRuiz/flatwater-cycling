@@ -44,7 +44,7 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2) {
 
   var returnPoints = [
     [abovePoint1, abovePoint2],
-    [abovePoint1, abovePoint2]
+    [belowPoint1, belowPoint2]
   ];
   
   return returnPoints;
