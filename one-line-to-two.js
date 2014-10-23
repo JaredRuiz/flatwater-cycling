@@ -55,15 +55,18 @@ MapLine.prototype.generateDoublePoints = function(lineArr) {
   for (var j = 0; j < lineArr.length; j++) {
     if (j < lineArr.length-1) {
       var newPoints = this.makeOnePointTwo(lineArr[j], lineArr[j+1]);
-      newPoints[0] = newPoints[0].filter(function(a) { return isNaN(a); });
-      newPoints[1] = newPoints[1].filter(function(a) { return isNaN(a); });
-      if (newPoints[0].length > 0) {
+      // console.log(JSON.stringify(newPoints[0]));
+      newPoints[0][0] = newPoints[0][0].filter(function(a) { return !isNaN(a); });
+      newPoints[0][1] = newPoints[0][1].filter(function(a) { return !isNaN(a); });
+      newPoints[1][0] = newPoints[1][0].filter(function(a) { return !isNaN(a); })
+      newPoints[1][1] = newPoints[1][1].filter(function(a) { return !isNaN(a); });
+      if (newPoints[0][0].length > 0 && newPoints[0][1].length > 0) {
         doublePoints.above = doublePoints.above.concat(newPoints[0]);
       }
-      if (newPoints[1].length > 0) {
+      if (newPoints[1][0].length > 0 && newPoints[1][1].length > 0) {
         doublePoints.below = doublePoints.below.concat(newPoints[1]);
       }
-      console.log(doublePoints.above);
+      // console.log(doublePoints.above);
     }
 
     // else {
@@ -71,6 +74,10 @@ MapLine.prototype.generateDoublePoints = function(lineArr) {
     //   doublePoints.below.concat(newPoints[1]);
     // }
   } // for
+
+        // doublePoints.above = doublePoints.above.filter(function(a) { return isNaN
+        // doublePoints.below = doublePoints.below.concat(newPoints[1]);
+
   return doublePoints;
 }
 
