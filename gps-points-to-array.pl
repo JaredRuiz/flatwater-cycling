@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-my $file = 'points';
+my $file = 'correct-points';
 open my $info, $file or die "Could not open $file: $!";
 
 my $str="[";

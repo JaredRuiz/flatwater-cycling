@@ -29,8 +29,11 @@
 console.log(JSON.stringify(ml.belowLinePoints));
 
 console.log("index: " + ml.aboveLinePoints.length)
-console.log("index: " + ml.belowLinePoints.length)
+console.log("index: " + JSON.stringify(ml.belowLinePoints));
 
+
+var line = L.polyline(oldLine, polyline_options);
+ // line.addTo(map);
       // Defining a polygon here instead of a polyline will connect the
       // endpoints and fill the path.
       // http://leafletjs.com/reference.html#polygon

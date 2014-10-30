@@ -1,7 +1,12 @@
 "use strict"
 
 function MapLine(arr) {
-  this.mainLine = arr.map(function(a) { return a; });
+  this.mainLine = []; //arr.map(function(a) { return a; });
+  for (var j = 0; j < arr.length; j++) {
+    if (j % 10 == 0) {
+      this.mainLine.push(arr[j]);
+    }
+  }
   this.doublePoints = this.generateDoublePoints(this.mainLine);
   this.aboveLinePoints = this.doublePoints.above;
   this.belowLinePoints = this.doublePoints.below;
@@ -15,7 +20,9 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2) {
   var dist = function(p1, p2) { 
     return Math.sqrt(Math.pow(_xc(p1, p2), 2) + Math.pow(_yc(p1, p2), 2));
   }
-
+var roundToTwo =  function(num) {    
+  return +(Math.round(num + "e+2")  + "e-2");
+}
   // take difference betwen points in order to shift to origin
   var diffPoint = [_xc(point1, point2), _yc(point1, point2)];
   
@@ -37,10 +44,16 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2) {
   var tempBelowPoint = [Math.cos(belowAngle), Math.sin(belowAngle)];
 
   /// Shift these new points back to where point1 and point2 initially began
-  var abovePoint1 = [point1[0] + tempAbovePoint[0], point1[1] + tempAbovePoint[1]];
-  var belowPoint1 = [point1[0] + tempBelowPoint[0], point1[1] + tempBelowPoint[1]];
-  var abovePoint2 = [point2[0] + tempAbovePoint[0], point2[1] + tempAbovePoint[1]];
-  var belowPoint2 = [point2[0] + tempBelowPoint[0], point2[1] + tempBelowPoint[1]];
+  //TODO  this is wrong...
+  var abovePoint1 = [point1[0] + tempAbovePoint[0] -1, point1[1] + tempAbovePoint[1]];
+  var abovePoint2 = [point2[0] + tempAbovePoint[0]-1, point2[1] + tempAbovePoint[1]];
+  var belowPoint1 = [point1[0] + tempBelowPoint[0]-1, point1[1] + tempBelowPoint[1]];
+  var belowPoint2 = [point2[0] + tempBelowPoint[0]-1, point2[1] + tempBelowPoint[1]];
+
+ // var abovePoint1 = [point1[0] + tempAbovePoint[0], point1[1] + tempAbovePoint[1]];
+ //  var abovePoint2 = [point2[0] + tempAbovePoint[0], point2[1] + tempAbovePoint[1]];
+ //  var belowPoint1 = [point1[0] + tempBelowPoint[0], point1[1] + tempBelowPoint[1]];
+ //  var belowPoint2 = [point2[0] + tempBelowPoint[0], point2[1] + tempBelowPoint[1]];
 
   var returnPoints = [
     [abovePoint1, abovePoint2],
