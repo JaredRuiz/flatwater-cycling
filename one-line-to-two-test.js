@@ -3,7 +3,7 @@
 var oneLine = require('./one-line-to-two'),
 should = require('should');
 
-var pi = Math.PI;
+
 
 describe("MapLine", function() {
 
@@ -14,6 +14,16 @@ describe("MapLine", function() {
   var dist = function(p1, p2) { 
     return Math.sqrt(Math.pow(_xc(p1, p2), 2) + Math.pow(_yc(p1, p2), 2));
   }
+
+
+  var makeRad = function(num) {
+    num = parseFloat(num).toFixed(4);
+    num = (num === "-0.0000") ? "0.0000" : num;
+    return num;
+  } // makeRad
+
+var pi = parseFloat(makeRad(Math.PI));
+
  //  var roundToTwo =  function(num) {    
 //     num = parseFloat(num+"e+2");
  
@@ -38,23 +48,29 @@ describe("MapLine", function() {
       // var tempTheta = Math.acos(ang);
 
       // var theta = (tempTheta+Math.PI/2)*Math.PI/180;
-      // theta.should.equal(1);
+      // theta.should.equal(1);e
 
       // correct
-      Math.cos(0).should.equal(1);
-      Math.sin(0).should.equal(0);
+      var ml = new oneLine.MapLine([0]);
+      ml.cos(0).should.equal(1);
+	    Math.sin(0).should.equal(0);
+      Math.acos(1).should.equal(0);
+	    Math.asin(0).should.equal(0);
 
-      // have to do some rounding and fudge the numbers a bit for cos(pi/2)
-      var num = parseFloat(Math.cos(Math.PI/2))
-      num.toFixed(5).should.equal('0.00000');
-      Math.sin(Math.PI/2).should.equal(1);
+      ml.cos(pi/2).should.equal(0);
+      ml.sin(pi/2).should.equal(1);
+      ml.acos(0).should.equal(pi/2);
+      ml.asin(1).should.equal(pi/2);
 
-      Math.cos(pi).should.equal(-1);
-      parseFloat(Math.sin(pi)).toFixed(5).should.equal("0.00000");
+      ml.cos(pi).should.equal(-1);
+      ml.sin(pi).should.equal(0);
+      ml.acos(-1).should.equal(pi);
+      ml.asin(0).should.equal(pi);
 
-      parseFloat(Math.cos(3*pi/2)).toFixed(5).should.equal("0.00000");
-      Math.sin(3*pi/2).should.equal(-1);
-      
+      ml.cos(3*pi/2).should.equal(0);
+      ml.sin(3*pi/2).should.equal(-1);
+      ml.acos(0).should.equal(3*pi/2);
+      ml.asin(-1).should.equal(3*pi/2);
 
     });
 

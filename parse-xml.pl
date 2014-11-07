@@ -11,10 +11,15 @@ $xml = new XML::Simple;
 # $data = $xml->XMLin("first-info.xml");
 $data = $xml->XMLin("sean_ride_2.xml");
 
+# foreach $e (@{$data->{Activities}->{Activity}->{Lap}->{Track}->{Trackpoint}})
+# {
+# 	print $e->{Position}->{LatitudeDegrees}, "\n";
+# 	print $e->{Position}->{LongitudeDegrees}, "\n";
+# }
+
 foreach $e (@{$data->{Activities}->{Activity}->{Lap}->{Track}->{Trackpoint}})
 {
-	print $e->{Position}->{LatitudeDegrees}, "\n";
-	print $e->{Position}->{LongitudeDegrees}, "\n";
+    print $e->{Extensions}->{TPX}->{Speed}, "\n";
 }
 
 
