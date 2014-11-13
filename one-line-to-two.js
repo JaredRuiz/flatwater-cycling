@@ -7,7 +7,6 @@ function MapLine(linePoints, speedPoints) {
     // }
   } // for
 
-
   this.speedPoints = [];
   for (var j = 0; j < speedPoints.length; j++) {
     this.speedPoints.push(speedPoints[j]);
@@ -24,7 +23,6 @@ MapLine.prototype.makeRad = function(num) {
     num = (num === "-0.0000") ? "0.0000" : num;
     return parseFloat(num);
   } // makeRad
-
 
 // TODO it would be good to pull these out into another class...
 MapLine.prototype.cos = function(a) {
@@ -55,6 +53,9 @@ MapLine.prototype.asin = function(a) {
 MapLine.prototype.pi = function() { return this.makeRad(Math.PI) }
 
 MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
+
+  // console.log(speedPoint);
+
   // helper functions
   var makeRad = function(num) { return parseFloat(num).toFixed(5); }
   var _c = function(p1, p2, idx) { return p2[idx] - p1[idx]; }
@@ -72,7 +73,7 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
   // var ang = rad/diffPoint[0];
   var ang = diffPoint[0]/rad;
 
-  console.log("agnle is: " + ang);
+  // console.log("agnle is: " + ang);
 
   /// Since x=rCos(a) and y=rSin(a) (for an angle a) and we know x, y, and r, we compute theta
   // TODO fix acos...its broken
@@ -82,12 +83,19 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
   // console.log("theta is: " + theta);
 
   /// Add +/- pi tp theta...this gives us new angles which are both perpendicular to theta TODO WRONG
-  var aboveAngle = parseFloat((theta + this.pi()/2)*this.pi()/180);
-  var belowAngle = parseFloat((theta - this.pi()/2)*this.pi()/180);
+  var aboveAngle = parseFloat((theta + this.pi()/2));
+  var belowAngle = parseFloat((theta - this.pi()/2));
 
-  // console.log("theta is: " + aboveAngle);
+
   
   var scale = parseFloat(".00" + speedPoint.toString());
+  // var scale = speedPoint * .1;
+  // var scale = parseFloat(speedPoint * .1);
+  // var scale = parseFloat(speedPoint);
+
+  // console.log(scale);
+
+  
 
   /// Compute points on this new line made by above angles, at distance 1 from origin 
   var tempAbovePoint = [scale*this.cos(aboveAngle), scale*this.sin(aboveAngle)];
@@ -103,17 +111,12 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
   // var belowPoint1 = [point1[0] + tempBelowPoint[0]-.1, point1[1] + tempBelowPoint[1]];
   // var belowPoint2 = [point2[0] + tempBelowPoint[0]-.1, point2[1] + tempBelowPoint[1]];
 
- var abovePoint1 = [point1[0] + tempAbovePoint[0], point1[1] + tempAbovePoint[1]];
+  var abovePoint1 = [point1[0] + tempAbovePoint[0], point1[1] + tempAbovePoint[1]];
   var abovePoint2 = [point2[0] + tempAbovePoint[0], point2[1] + tempAbovePoint[1]];
   var belowPoint1 = [point1[0] + tempBelowPoint[0], point1[1] + tempBelowPoint[1]];
   var belowPoint2 = [point2[0] + tempBelowPoint[0], point2[1] + tempBelowPoint[1]];
 
- // var abovePoint1 = [scale*(point1[0] + tempAbovePoint[0]), scale*(point1[1] + tempAbovePoint[1])];
- //  var abovePoint2 = [scale*(point2[0] + tempAbovePoint[0]), scale*(point2[1] + tempAbovePoint[1])];
- //  var belowPoint1 = [scale*(point1[0] + tempBelowPoint[0]), scale*(point1[1] + tempBelowPoint[1])];
- //  var belowPoint2 = [scale*(point2[0] + tempBelowPoint[0]), scale*(point2[1] + tempBelowPoint[1])];
-
-  var returnPoints = [
+   var returnPoints = [
     [abovePoint1, abovePoint2],
     [belowPoint1, belowPoint2]
   ];
@@ -124,16 +127,17 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
 MapLine.prototype.generateDoublePoints = function() {
   
   if (this.mainLine.length !== this.speedPoints.length) {
-    console.log(this.mainLine.length);
-    console.log(this.speedPoints.length);
+    // console.log(this.mainLine.length);
+    // console.log(this.speedPoints.length);
     throw new Error("array lengths do not match");
   }
 
   var doublePoints = { above: [], below: [] };
   for (var j = 0; j < this.mainLine.length; j++) {
     if (j < this.mainLine.length-1) {
+      // todo: dont pass in entire array, just one point...this is weird though...
       var newPoints = this.makeOnePointTwo(this.mainLine[j], this.mainLine[j+1], this.speedPoints);
-      console.log("newpoints: " + JSON.stringify(newPoints[0]));
+      // console.log("newpoints: " + JSON.stringify(newPoints[0]));
       newPoints[0][0] = newPoints[0][0].filter(function(a) { return !isNaN(a); });
       newPoints[0][1] = newPoints[0][1].filter(function(a) { return !isNaN(a); });
       newPoints[1][0] = newPoints[1][0].filter(function(a) { return !isNaN(a); })
@@ -144,7 +148,7 @@ MapLine.prototype.generateDoublePoints = function() {
       if (newPoints[1][0].length > 0 && newPoints[1][1].length > 0) {
         doublePoints.below = doublePoints.below.concat(newPoints[1]);
       }
-      console.log(doublePoints.above);
+      // console.log(doublePoints.above);
     }
   } // for
   return doublePoints;
