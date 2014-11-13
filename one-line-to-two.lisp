@@ -39,13 +39,15 @@
 ;;     (let ((div (expt 10 precision)))
 ;;          (/ (funcall what (* number div)) div)))
 
+;; tested - needs to round more correctly
 (defun polar-point-to-cartesian-point (p) 
   (cons (* (car p) (cos (cdr p)))
             (* (car p) (sin (cdr p)))))
 
+;; tested
 (defun shift-polar-point-by-angle (p angle) 
-  (cons (car cartesian-point-to-polar-point (p)) ;; distance between points
-            (+ (cdr cartesian-point-to-polar-point (p)) angle)))
+  (cons (car  p) ;; distance between points
+            (+ (cdr  p) angle)))
 
 ;; p - cartesian point -> cartesian point
 (defun generate-above-point (p) 
