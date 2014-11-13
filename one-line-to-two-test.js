@@ -3,33 +3,14 @@
 var oneLine = require('./one-line-to-two'),
 should = require('should');
 
-
-
 describe("MapLine", function() {
-
-
-  var _c = function(p1, p2, idx) { return p2[idx] - p1[idx]; }
-  var _xc = function(p1, p2) { return _c(p1, p2, 0); } 
-  var _yc = function(p1, p2) { return _c(p1, p2, 1); }
-  var dist = function(p1, p2) { 
-    return Math.sqrt(Math.pow(_xc(p1, p2), 2) + Math.pow(_yc(p1, p2), 2));
   }
-
-
+  // TODO: converts a number to a radian???
   var makeRad = function(num) {
     num = parseFloat(num).toFixed(4);
     num = (num === "-0.0000") ? "0.0000" : num;
     return num;
   } // makeRad
-
-var pi = parseFloat(makeRad(Math.PI));
-
- //  var roundToTwo =  function(num) {    
-//     num = parseFloat(num+"e+2");
- 
-//   return +(Math.round(num)  + "e-2");
-// }
-
 
   describe("makeOnePointTwo", function() {
     

@@ -38,7 +38,11 @@ var line = L.polyline(oldLine, polyline_options);
 // endpoints and fill the path.
 // http://leafletjs.com/reference.html#polygon
 
-var startingLine = L.polyline(oldLine, polyline_options);
+// var sqLine = [ [40, -96], [40, -95], [42, -95], [42, -96] ];
+// var sq = L.polygon(sqLine, polyline_options);
+// sq.addTo(map);
+
+ar startingLine = L.polyline(oldLine, polyline_options);
 startingLine.addTo(map);
 var aboveLine = L.polyline(ml.aboveLinePoints, polyline_options);
 var belowLine = L.polyline(ml.belowLinePoints, polyline_options);
@@ -47,5 +51,3 @@ belowLine.addTo(map);
 </script>
   </body>
   </html>
-
-
