@@ -1,5 +1,3 @@
-;;beginning of the Wizard's Apprentice Game
-
 (defun square (x) 
   (* x x))
 
@@ -35,6 +33,7 @@
   (cons (distance-between-two-points p (cons 0 0))
             (generate-angle (car p) (distance-between-two-points p (cons 0 0)))))
 
+
 ;; (defun round-to (number precision &optional (what #'round))
 ;;     (let ((div (expt 10 precision)))
 ;;          (/ (funcall what (* number div)) div)))
@@ -56,3 +55,19 @@
 (defun generate-below-point (p)
   (polar-point-to-cartesian-point
    (shift-polar-point-by-angle (cartesian-point-to-polar-point p) (/ (* -1 pi) 2))))
+
+(defun two-points-to-four-points (p q)
+  ;; shift points back to the origin
+  (let ((new-point (subtract-two-points (p q))))
+    (cons ((add-two-points 
+              ((cons (generate-above-point new-point)
+                         (generate-below-point new-point)))
+              p)
+             ((add-two-points 
+               ((cons (generate-above-point new-point) 
+                          (generate-below-point new-point)))
+               q))))))
+
+
+            
+          
