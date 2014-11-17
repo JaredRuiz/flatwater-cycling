@@ -21,7 +21,8 @@ var map = L.mapbox.map('map', 'examples.map-i86nkdio').setView([40, -96], 6);
 
 // http://leafletjs.com/reference.html#polyline
 var polyline_options = {
-  color: '#FF0000'
+  color: '#FF0000',
+  width: '.01'
 };
 
 var ml = new MapLine(oldLine,  speedLine);
@@ -33,7 +34,7 @@ var ml = new MapLine(oldLine,  speedLine);
 
 
 for (var j = 0; j < ml.polygonPoints.length; j++) {
-  var poly = L.polygon(ml.polygonPoints[j]);
+  var poly = L.polygon(ml.polygonPoints[j], polyline_options);
   poly.addTo(map);
 }
 
