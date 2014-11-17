@@ -16,6 +16,8 @@ function MapLine(linePoints, speedPoints) {
   this.aboveLinePoints = this.doublePoints.above;
   this.belowLinePoints = this.doublePoints.below;
 
+  this.polygonPoints = this.makePolys();
+
 }; // MapLine
 
 MapLine.prototype.makeRad = function(num) {
@@ -88,8 +90,8 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
 
 
   
-  var scale = parseFloat(".00" + speedPoint.toString());
-  // var scale = speedPoint * .1;
+  // var scale = parseFloat(".00" + speedPoint.toString());
+  var scale = speedPoint * .0001;
   // var scale = parseFloat(speedPoint * .1);
   // var scale = parseFloat(speedPoint);
 
@@ -136,7 +138,7 @@ MapLine.prototype.generateDoublePoints = function() {
   for (var j = 0; j < this.mainLine.length; j++) {
     if (j < this.mainLine.length-1) {
       // todo: dont pass in entire array, just one point...this is weird though...
-      var newPoints = this.makeOnePointTwo(this.mainLine[j], this.mainLine[j+1], this.speedPoints);
+      var newPoints = this.makeOnePointTwo(this.mainLine[j], this.mainLine[j+1], this.speedPoints[j]);
       // console.log("newpoints: " + JSON.stringify(newPoints[0]));
       newPoints[0][0] = newPoints[0][0].filter(function(a) { return !isNaN(a); });
       newPoints[0][1] = newPoints[0][1].filter(function(a) { return !isNaN(a); });
@@ -153,6 +155,17 @@ MapLine.prototype.generateDoublePoints = function() {
   } // for
   return doublePoints;
 }
+
+MapLine.prototype.makePolys = function() {
+  var polys = [];
+  for (var j = 0; j < this.aboveLinePoints.length; j++) {
+    if (j < this.aboveLinePoints.length-1) {
+      polys.push([this.aboveLinePoints[j], this.aboveLinePoints[j+1],
+                          this.belowLinePoints[j+1], this.belowLinePoints[j]]);
+    }
+  }
+  return polys;
+};
 
 
 // exports.MapLine = MapLine;
