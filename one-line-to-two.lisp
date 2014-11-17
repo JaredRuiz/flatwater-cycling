@@ -33,10 +33,9 @@
   (cons (distance-between-two-points p (cons 0 0))
             (generate-angle (car p) (distance-between-two-points p (cons 0 0)))))
 
-
-;; (defun round-to (number precision &optional (what #'round))
-;;     (let ((div (expt 10 precision)))
-;;          (/ (funcall what (* number div)) div)))
+(defun round-to (number precision &optional (what #'round))
+    (let ((div (expt 10 precision)))
+         (/ (funcall what (* number div)) div)))
 
 ;; tested - needs to round more correctly
 (defun polar-point-to-cartesian-point (p) 
@@ -56,18 +55,25 @@
   (polar-point-to-cartesian-point
    (shift-polar-point-by-angle (cartesian-point-to-polar-point p) (/ (* -1 pi) 2))))
 
-(defun two-points-to-four-points (p q)
+;; the below both take two points, and returns two new points, 
+;; both shifted by pi/2 (-pi/2) from the original points
+(defun points-to-above-points (p q)
   ;; shift points back to the origin
-  (let ((new-point (subtract-two-points (p q))))
-    (cons ((add-two-points 
-              ((cons (generate-above-point new-point)
-                         (generate-below-point new-point)))
-              p)
-             ((add-two-points 
-               ((cons (generate-above-point new-point) 
-                          (generate-below-point new-point)))
-               q))))))
+  (let ((above-point (generate-above-point (subtract-two-points p q))))
+    (cons (add-two-points above-point p)
+              (add-two-points above-point q))))
+
+(defun points-to-below-points (p q)
+  ;; shift points back to the origin
+  (let ((below-point (generate-below-point (subtract-two-points p q))))
+    (cons (add-two-points below-point p)
+              (add-two-points below-point q))))
+
+;; take a list of points and calculate the above/below points
 
 
-            
-          
+(defun generate-above-line-helper (temp-list list)
+  (if (endp (cdr list))
+        temp-list
+  (generate-above-line-helper 
+    (cons temp-list (points-to-above-points (car list) (cadr list))) (cdr list))))
