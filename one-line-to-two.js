@@ -1,12 +1,12 @@
 "use strict"
 function MapLine(linePoints, speedPoints) {
   this.mainLine = []; //arr.map(function(a) { return a; });
-  for (var j = 0; j < linePoints.length; j++) {
+  for (var j = 0, max = linePoints.length; j < max; j++) {
     this.mainLine.push(linePoints[j]);
   } // for
 
   this.speedPoints = [];
-  for (var j = 0; j < speedPoints.length; j++) {
+  for (var j = 0, max = speedPoints.length; j < max; j++) {
     this.speedPoints.push(speedPoints[j]);
   } // for
 
@@ -78,17 +78,13 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
 
 
   /// Since x=rCos(a) and y=rSin(a) (for an angle a) and we know x, y, and r, we compute theta
-  // TODO fix acos...its broken
-  // var theta = this.acos(ang);
   var theta = Math.acos(ang);
 
-  // console.log("theta is: " + theta);
-
-  /// Add +/- pi tp theta...this gives us new angles which are both perpendicular to theta TODO WRONG
+  /// Add +/- pi tp theta...this gives us new angles which are both perpendicular to theta
   var aboveAngle = parseFloat((theta + this.pi()/2));
   var belowAngle = parseFloat((theta - this.pi()/2));
 
-  var scale = speedPoint * .00001;
+  var scale = speedPoint * .0001;
   
   /// Compute points on this new line made by above angles, at distance 1 from origin 
   var tempAbovePoint = [scale*this.cos(aboveAngle), scale*this.sin(aboveAngle)];
@@ -114,9 +110,8 @@ MapLine.prototype.generateDoublePoints = function() {
   }
 
   var doublePoints = { above: [], below: [] };
-  for (var j = 0; j < this.mainLine.length; j++) {
+  for (var j = 0, max = this.mainLine.length; j < max; j++) {
     if (j < this.mainLine.length-1) {
-      // todo: dont pass in entire array, just one point...this is weird though...
       var newPoints = this.makeOnePointTwo(this.mainLine[j], this.mainLine[j+1], this.speedPoints[j]);
       // console.log("newpoints: " + JSON.stringify(newPoints[0]));
       newPoints[0][0] = newPoints[0][0].filter(function(a) { return !isNaN(a); });
@@ -136,7 +131,7 @@ MapLine.prototype.generateDoublePoints = function() {
 
 MapLine.prototype.makePolys = function() {
   var polys = [];
-  for (var j = 0; j < this.aboveLinePoints.length; j++) {
+  for (var j = 0, max = this.aboveLinePoints.length; j < max; j++) {
     if (j < this.aboveLinePoints.length-1) {
       polys.push([this.aboveLinePoints[j], this.aboveLinePoints[j+1],
                   this.belowLinePoints[j+1], this.belowLinePoints[j]]);
