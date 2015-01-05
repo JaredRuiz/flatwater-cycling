@@ -43,8 +43,8 @@ MapLine.prototype.pi = function() {
 
 // helper functions for shifting points
 MapLine.prototype.c = function(p1, p2, idx) { return p2[idx] - p1[idx]; }
-MapLine.prototype.xc = function(p1, p2) { return c(p1, p2, 0); };
-MapLine.prototype.yc = function(p1, p2) { return c(p1, p2, 1); };
+MapLine.prototype.xc = function(p1, p2) { return c(p1, p2, "xcoord"); };
+MapLine.prototype.yc = function(p1, p2) { return c(p1, p2, "ycoord"); };
 
 MapLine.prototype.dist = function(p1, p2) { 
     return Math.sqrt(Math.pow(xc(p1, p2), 2) + Math.pow(yc(p1, p2), 2));
@@ -53,8 +53,9 @@ MapLine.prototype.dist = function(p1, p2) {
 ////////////////////////////////////////////////////////////////////////////////
 // private
 MapLine.prototype._process = function(linePoints, speedPoints) {
-  var doublePoints      = this.generateDoublePoints(this.mainLine, this.speedPoints),
-        polygonPoints    = this.makePolys(doublePoints);
+  var points = this._combinePositionAndSpeedPoints(mainLine, speedPoints),
+       doublePoints = this.generateDoublePoints(points),
+       polygonPoints    = this.makePolys(doublePoints);
   return polygonPoints;
 };
 
@@ -76,14 +77,69 @@ MapLine.prototype._combinePositionAndSpeedPoints = function(posPoints, speedPoin
   }
 };
 
-MapLine.prototype._makeParallelLines = function(point, scale) {
-  var tail = point.ycoord,
-        head = point.xcoord,
-        diffPoint = [_xc(tail, head), _yc(tail, head)],  // shift points to origin
-        rad = dist([0, 0], diffPoint), // distance of diffPoint to origin
-        ang = diffPoint[0]/rad,
-        theta = Math.acos(ang), //  x=rCos(theta) and y=rSin(theta)
-        pLines = this._generateAboveAndBelowPoints(point, theta, scale);
+MapLine.prototype._makeParallelLines = function(tail, head, scale) {
+  var diffPoint = {
+                            xcoord: this.xc(tail, head),
+                            ycoord: this.yc(tail, head)
+                          },
+        origin = { xcoord: 0, ycoord: 0 },
+        rad = this.dist(origin, diffPoint), // distance of diffPoint to origin
+        ang = diffPoint.xcoord/rad, // TODO: what is going on here??
+         //  TODO should we use Math.acos or this.acos ??
+         // theta = Math.acos(ang), //  x=rCos(theta) and y=rSin(theta)
+         theta = this.acos(ang), //  x=rCos(theta) and y=rSin(theta)
+         // pLines = this._generateAboveAndBelowPoints(point, theta, scale);
+  // return pLines;
+    
+          scale = tail.speedPoint * scale;
+
+
+  // Add +/- pi to theta...this gives us new angles which are both perpendicular to theta
+  var aboveAngle = parseFloat((theta + this.pi()/2)),
+        belowAngle = parseFloat((theta - this.pi()/2));
+
+  // TODO Compute points on this new line ???? made by above angles, at distance of scale from origin 
+  var tempAbovePoint = {
+                                        xcood: scale*this.cos(aboveAngle),
+                                        ycoord: scale*this.sin(aboveAngle)
+                                       },
+         tempBelowPoint = {
+                                        xcood: scale*this.cos(belowAngle),
+                                        ycoord: scale*this.sin(belowAngle)
+                                       };
+  // TODO this may be good in itwo own function
+  var pLines = {
+    // group the above points into one line
+    above: [
+      { xcoord: tail.xcoord + tempAbovePoint.xcoord,
+        ycoord: tail.ycoord + tempAbovePoint.ycoord, 
+      },
+      { xcoord: head.xcoord + tempAbovePoint.xcoord,
+        ycoord: head.ycoord + tempAbovePoint.ycoord, 
+      }
+    ],
+    // group the above points into another line
+    below: [
+      { xcoord: tail.xcoord + tempBelowPoint.xcoord,
+        ycoord: tail.ycoord + tempBelowPoint.ycoord, 
+      },
+      { xcoord: head.xcoord + tempBelowPoint.xcoord,
+        ycoord: head.ycoord + tempBelowPoint.ycoord, 
+      }
+    ]
+  ];
+
+
+  // var abovePoint1 = [point1[0] + tempAbovePoint[0], point1[1] + tempAbovePoint[1]],
+  //       abovePoint2 = [point2[0] + tempAbovePoint[0], point2[1] + tempAbovePoint[1]],
+  //       belowPoint1 = [point1[0] + tempBelowPoint[0], point1[1] + tempBelowPoint[1]],
+  //       belowPoint2 = [point2[0] + tempBelowPoint[0], point2[1] + tempBelowPoint[1]],
+  //       returnPoints = [
+  //         [abovePoint1, abovePoint2],
+  //         [belowPoint1, belowPoint2]
+  //       ];
+
+  // return returnPoints;
   return pLines;
 };
 
@@ -94,29 +150,6 @@ MapLine.prototype._calculateScale = function(positionAndSpeedPoints) {
 }
 
 
-
-MapLine.prototype._generateAboveAndBelowPoints = function(point, theta, scale) {
-  // Add +/- pi to theta...this gives us new angles which are both perpendicular to theta
-  var aboveAngle = parseFloat((theta + this.pi()/2)),
-        belowAngle = parseFloat((theta - this.pi()/2));
-
-  // TODO Compute points on this new line ???? made by above angles, at distance of scale from origin 
-  var tempAbovePoint = [scale*this.cos(aboveAngle), scale*this.sin(aboveAngle)],
-        tempBelowPoint = [scale*this.cos(belowAngle), scale*this.sin(belowAngle)];
-  
-  var abovePoint1 = [point1[0] + tempAbovePoint[0], point1[1] + tempAbovePoint[1]],
-        abovePoint2 = [point2[0] + tempAbovePoint[0], point2[1] + tempAbovePoint[1]],
-        belowPoint1 = [point1[0] + tempBelowPoint[0], point1[1] + tempBelowPoint[1]],
-        belowPoint2 = [point2[0] + tempBelowPoint[0], point2[1] + tempBelowPoint[1]],
-        returnPoints = [
-          [abovePoint1, abovePoint2],
-          [belowPoint1, belowPoint2]
-        ];
-
-  return returnPoints;
-};
-
-MapLine.prototype._process = function(mainLine, speedPoints) {
 
 
 
@@ -129,24 +162,22 @@ MapLine.prototype._process = function(mainLine, speedPoints) {
     return newPoints;
   };
 
-MapLine.prototype.generateDoublePoints = function() {
+MapLine.prototype.generateDoublePoints = function(points) {
   
-  var points = this._combinePositionAndSpeedPoints(mainLine, speedPoints),
-        scale = this._calculateScale(points),
+  var scale = this._calculateScale(points),
         doublePoints = { above: [], below: [] };
 
   for (var j = 0, max = this.points.length; j < max; j++) {
     if (j < this.points.length-1) {
-      // TODO this is wrong...probably need to call with points[j], points[j+1]
-      var aboveAndBelowPoints = this._makeParallelLines(points[j], scale),
+      var aboveAndBelowPoints = this._makeParallelLines(points[j], points[j+1], scale),
+      // TODO this is probably not necessary...
             sanitizedPoints = this._sanitizePoints(aboveAndBelowPoints);
 
-      // TODO what is going on here ???
-      if (sanitizedPoints[0][0].length > 0 && sanitizedPoints[0][1].length > 0) {
-        doublePoints.above = doublePoints.above.concat(newPoints[0]);
+      if (sanitizedPoints[0].length > 0 && sanitizedPoints[0].length > 0) {
+        doublePoints.above = doublePoints.above.concat(sanitizedPoints.above);
       }
       if (sanitizedPoints[1][0].length > 0 && sanitizedPoints[1][1].length > 0) {
-        doublePoints.below = doublePoints.below.concat(newPoints[1]);
+        doublePoints.below = doublePoints.below.concat(newPoints.below);
       }
      }
   }
