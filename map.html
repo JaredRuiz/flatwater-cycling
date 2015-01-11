@@ -26,10 +26,11 @@
             // line-width: 0.01;
           };
 
-          var ml = new MapLine(oldLine,  speedLine);
+          var ml = new MapLine();
+          var polygonPoints = ml.process(oldLine, speedLine);
 
-          for (var j = 0, max = ml.polygonPoints.length; j < max; j++) {
-            var poly = L.polygon(ml.polygonPoints[j], polyline_options);
+          for (var j = 0, max = polygonPoints.length; j < max; j++) {
+            var poly = L.polygon(polygonPoints[j], polyline_options);
             poly.addTo(map);
           }
 

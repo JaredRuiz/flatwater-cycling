@@ -47,21 +47,21 @@ MapLine.prototype.c = function(p1, p2, idx) {
 };
 
 MapLine.prototype.xc = function(p1, p2) { 
-  return c(p1, p2, "xcoord"); 
+  return this.c(p1, p2, "xcoord"); 
 };
 
 MapLine.prototype.yc = function(p1, p2) { 
-  return c(p1, p2, "ycoord"); 
+  return this.c(p1, p2, "ycoord"); 
 };
 
 MapLine.prototype.dist = function(p1, p2) { 
-  return Math.sqrt(Math.pow(xc(p1, p2), 2) + Math.pow(yc(p1, p2), 2));
+  return Math.sqrt(Math.pow(this.xc(p1, p2), 2) + Math.pow(this.yc(p1, p2), 2));
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // private
 MapLine.prototype._process = function(linePoints, speedPoints) {
-  var points = this._combinePositionAndSpeedPoints(mainLine, speedPoints),
+  var points = this._combinePositionAndSpeedPoints(linePoints, speedPoints),
        doublePoints = this.generateDoublePoints(points),
        polygonPoints = this.makePolys(doublePoints);
   return polygonPoints;
@@ -97,7 +97,7 @@ MapLine.prototype._makeParallelLines = function(tail, head, scale) {
          //  TODO should we use Math.acos or this.acos ??
          // theta = Math.acos(ang), //  x=rCos(theta) and y=rSin(theta)
          theta = this.acos(ang), //  x=rCos(theta) and y=rSin(theta)
-         aAndBPoints = this._generateAboveAndBelowPoint(point, theta, scale),
+         aAndBPoints = this._generateAboveAndBelowPoint(diffPoint, theta, scale),
          pLines = this._makeLinesThroughPoints(tail, head, aAndBPoints);
   return pLines;
 };
@@ -105,21 +105,21 @@ MapLine.prototype._makeParallelLines = function(tail, head, scale) {
 
 
 MapLine.prototype._generateAboveAndBelowPoint = function(point, angle, scale) {
-  var factor = tail.speedPoint * scale,
+  var factor = point.speedPoint * scale,
   // Add +/- pi to theta...this gives us new angles which are both perpendicular to theta
-        aboveAngle = parseFloat((theta + this.pi()/2)),
-        belowAngle = parseFloat((theta - this.pi()/2)),
+        aboveAngle = parseFloat((angle + this.pi()/2)),
+        belowAngle = parseFloat((angle - this.pi()/2)),
         tempAbovePoint = {},
         tempBelowPoint = {};
 
   // TODO Compute points on this new line ???? made by above angles, at distance of scale from origin 
   tempAbovePoint = { 
-    xcoord: scale*this.cos(aboveAngle),
-    ycoord: scale*this.sin(aboveAngle)
+    xcoord: factor*this.cos(aboveAngle),
+    ycoord: factor*this.sin(aboveAngle)
   };
   tempBelowPoint = {
-    xcoord: scale*this.cos(belowAngle),
-    ycoord: scale*this.sin(belowAngle)
+    xcoord: factor*this.cos(belowAngle),
+    ycoord: factor*this.sin(belowAngle)
   };
   return { above: tempAbovePoint, below: tempBelowPoint };
 };
@@ -156,10 +156,10 @@ MapLine.prototype._calculateScale = function(positionAndSpeedPoints) {
 }
 
 MapLine.prototype._sanitizePoints = function(points) {
-    points.above = newPoints.above.filter(function(a) { 
+    points.above = points.above.filter(function(a) { 
       return !isNaN(a.xcoord) && !isNaN(a.ycoord); 
     });
-    points.below = newPoints.below.filter(function(a) { 
+    points.below = points.below.filter(function(a) { 
       return !isNaN(a.xcoord) && !isNaN(a.ycoord); 
     });
     return points;
@@ -170,8 +170,8 @@ MapLine.prototype.generateDoublePoints = function(points) {
   var scale = this._calculateScale(points),
         doublePoints = { above: [], below: [] };
 
-  for (var j = 0, max = this.points.length; j < max; j++) {
-    if (j < this.points.length-1) {
+  for (var j = 0, max = points.length; j < max; j++) {
+    if (j < points.length-1) {
       var aboveAndBelowPoints = this._makeParallelLines(points[j], points[j+1], scale),
             sanitizedPoints = this._sanitizePoints(aboveAndBelowPoints);
       // if (sanitizedPoints.above.length > 0 && sanitizedPoints.below.length > 0) {
