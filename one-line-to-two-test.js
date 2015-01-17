@@ -1,79 +1,118 @@
 "use strict"
 
 var oneLine = require('./one-line-to-two'),
-should = require('should');
-
-
+     should   = require('chai').should(),
+     _           = require('underscore');
 
 describe("MapLine", function() {
 
+  var ML = new oneLine.MapLine();
 
-  var _c = function(p1, p2, idx) { return p2[idx] - p1[idx]; }
-  var _xc = function(p1, p2) { return _c(p1, p2, 0); } 
-  var _yc = function(p1, p2) { return _c(p1, p2, 1); }
-  var dist = function(p1, p2) { 
-    return Math.sqrt(Math.pow(_xc(p1, p2), 2) + Math.pow(_yc(p1, p2), 2));
-  }
+  it("#combinePositionAndSpeedPoints", function() {
 
+    var linePoints = [ 
+      [ 1.1, 2.1],
+      [ 1.2, 2.2],
+      [ 1.3, 2.3],
+      [ 1.4, 2.4]
+    ],
+          // speedPoints = [ 
+          //   [ 1 ],
+          //   [ 2 ],
+          //   [ 3 ],
+          //   [ 4 ]
+          // ];
+    // TODO is this correct ????
+      speedPoints = [ 1, 2, 3, 4 ];
 
-  var makeRad = function(num) {
-    num = parseFloat(num).toFixed(4);
-    num = (num === "-0.0000") ? "0.0000" : num;
-    return num;
-  } // makeRad
-
-var pi = parseFloat(makeRad(Math.PI));
-
- //  var roundToTwo =  function(num) {    
-//     num = parseFloat(num+"e+2");
- 
-//   return +(Math.round(num)  + "e-2");
-// }
-
-
-  describe("makeOnePointTwo", function() {
-    
-    // it("should shift points correctly", function() {
-    //   var point1 = [0, 1];
-    //   var point1 = [0, 2];
-    //   var diffPoint =  [_xc(point1, point2), _yc(point1, point2)];
-    //   var abovePoint1 = [point1[0] + tempAbovePoint[0] -1, point1[1] + tempAbovePoint[1]];
-    //   var belowPoint1 = [point1[0] + tempBelowPoint[0]-1, point1[1] + tempBelowPoint[1]];
-    // });
-
-
-    it("angles the coordinate axes should work correctly", function() {
-
-      // var ang = 0;
-      // var tempTheta = Math.acos(ang);
-
-      // var theta = (tempTheta+Math.PI/2)*Math.PI/180;
-      // theta.should.equal(1);e
-
-      // correct
-      var ml = new oneLine.MapLine([0]);
-      ml.cos(0).should.equal(1);
-	    Math.sin(0).should.equal(0);
-      Math.acos(1).should.equal(0);
-	    Math.asin(0).should.equal(0);
-
-      ml.cos(pi/2).should.equal(0);
-      ml.sin(pi/2).should.equal(1);
-      ml.acos(0).should.equal(pi/2);
-      ml.asin(1).should.equal(pi/2);
-
-      ml.cos(pi).should.equal(-1);
-      ml.sin(pi).should.equal(0);
-      ml.acos(-1).should.equal(pi);
-      ml.asin(0).should.equal(pi);
-
-      ml.cos(3*pi/2).should.equal(0);
-      ml.sin(3*pi/2).should.equal(-1);
-      ml.acos(0).should.equal(3*pi/2);
-      ml.asin(-1).should.equal(3*pi/2);
-
-    });
-
+    var comPoints = ML._combinePositionAndSpeedPoints(linePoints, speedPoints);
+    comPoints.length.should.equal(4);
+    _.pluck(comPoints, "xcoord").should.deep.equal( [1.1, 1.2, 1.3, 1.4]);
+    _.pluck(comPoints, "ycoord").should.deep.equal( [2.1, 2.2, 2.3, 2.4]);
+    _.pluck(comPoints, "speed").should.deep.equal( [1, 2, 3, 4]);
   });
+
+  it("#xc", function() {
+    var p1 = { xcoord: 1, ycoord: 0 },
+          p2 = { xcoord: 2, ycoord: 0 };
+    ML.xc(p1, p2).should.equal(1);
+  });
+
+  it("#yc", function() {
+    var p1 = { xcoord: 1, ycoord: 100 },
+          p2 = { xcoord: 2, ycoord: 150 };
+    ML.yc(p1, p2).should.equal(50);
+  });
+
+it("#dist", function() {
+    var p1 = { xcoord: 1, ycoord: 0 },
+          p2 = { xcoord: 2, ycoord: 0 };
+    ML.dist(p1, p2).should.equal(1);
+
+    var p1 = { xcoord: 0, ycoord: 1 },
+          p2 = { xcoord: 0, ycoord: 0 };
+    ML.dist(p1, p2).should.equal(1);
+
+    var p1 = { xcoord: 1, ycoord: 2 },
+          p2 = { xcoord: 2, ycoord: 2 };
+    ML.dist(p1, p2).should.equal(1);
+  
+  // TODO may want to add some more cases here...
+  });
+  
+  it("#_makeParallelLines", function() {
+
+    var tail = [0, 0],
+    // head = [0, 1],
+    head = [1, 0];
+
+    // var tail = [1, 2],
+    // head = [ 3, 4],
+    var scale = 1;
+    
+    var pLines = ML._makeParallelLines(tail, head, scale);
+    pLines.should.equal( [ 'a' ]);
+  });
+
+  it("#_generateAboveAndBelowPoint", function() {
+    var point = { xcoord: 0, ycoord: 1, speedPoint: 1 },
+          angle = ML.pi/2,
+          scale = 1;
+    
+    var aAndBPoint = ML._generateAboveAndBelowPoint(point, angle, scale);
+    aAndBPoint.above.should.deep.equal( { xcoord: -1, ycoord: 0 });
+    aAndBPoint.below.should.deep.equal( { xcoord: 1, ycoord: 0 });
+  });
+
+  
+
+  it("angles the coordinate axes should work correctly", function() {
+    // var ang = 0;
+    // var tempTheta = Math.acos(ang);
+    // var theta = (tempTheta+Math.PI/2)*Math.PI/180;
+    // theta.should.equal(1);e
+    // correct
+
+    ML.cos(0).should.equal(1.000);
+	  ML.sin(0).should.equal(0);
+    ML.acos(1).should.equal(0);
+	  ML.asin(0).should.equal(0);
+
+    ML.cos(ML.pi()/2).should.equal(0);
+    ML.sin(ML.pi()/2).should.equal(1);
+    ML.acos(0).should.equal(ML.pi()/2);
+    ML.asin(1).should.equal(ML.pi()/2);
+
+    // ML.cos(ML.pi).should.equal(-1);
+    // ML.sin(ML.pi).should.equal(0);
+    // ML.acos(-1).should.equal(ML.pi);
+    // ML.asin(0).should.equal(ML.pi);
+
+    // ML.cos(3*ML.pi/2).should.equal(0);
+    // ML.sin(3*ML.pi/2).should.equal(-1);
+    // ML.acos(0).should.equal(3*ML.pi/2);
+    // ML.asin(-1).should.equal(3*ML.pi/2);
+  });
+
 
 });

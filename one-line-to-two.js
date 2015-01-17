@@ -10,21 +10,28 @@ MapLine.prototype.process = function(linePoints, speedPoints) {
 
 // TODO it would be good to pull these out into another class...
 MapLine.prototype.makeRad = function(num) {
-  var fourDecimalFloat = parseFloat(num).toFixed(4),
-        finalFloat = (fourDecimalFloat === "-0.0000") ? "0.0000" : fourDecimalFloat;
+  var fourDecimalFloat = parseFloat(num.toFixed(4)),
+        finalFloat = (fourDecimalFloat === -0.0000) ? 0.0000 : fourDecimalFloat;
   return finalFloat;
 };
 
 MapLine.prototype.cos = function(a) {
+
+  console.log("angle is: " + a);
+
+  // console.log("pi() is: " + this.pi() * 1);
+  console.log("pi() is: " + this.makeRad(this.pi()));
+
+
   return this.makeRad(Math.cos(a));
 };
 
 MapLine.prototype.acos = function(a) {
   var tempRad = this.makeRad(Math.acos(a));
-  if (tempRad >= 2*this.pi) {
-    tempRad = this.acos(tempRad + 2*this.pi);
+  if (tempRad >= 2*this.pi()) {
+    tempRad = this.acos(tempRad + 2*this.pi());
   } else if (tempRad < 0) {
-    tempRad = this.acos(tempRad - 2*this.pi);
+    tempRad = this.acos(tempRad - 2*this.pi());
   }
   return tempRad;
 };
@@ -37,8 +44,8 @@ MapLine.prototype.asin = function(a) {
   return this.makeRad(Math.asin(a));
 };
 
-MapLine.prototype.pi = function() { 
-  return this.makeRad(Math.PI) 
+MapLine.prototype.pi() = function() { 
+  return this.makeRad(Math.PI()) 
 };
 
 // helper functions for shifting points
@@ -102,15 +109,16 @@ MapLine.prototype._makeParallelLines = function(tail, head, scale) {
   return pLines;
 };
 
-
-
 MapLine.prototype._generateAboveAndBelowPoint = function(point, angle, scale) {
   var factor = point.speedPoint * scale,
-  // Add +/- pi to theta...this gives us new angles which are both perpendicular to theta
+  // Add +/- pi() to theta...this gives us new angles which are both perpendicular to theta
         aboveAngle = parseFloat((angle + this.pi()/2)),
         belowAngle = parseFloat((angle - this.pi()/2)),
         tempAbovePoint = {},
         tempBelowPoint = {};
+
+  // console.log("above" + aboveAngle);
+  // console.log("below" + belowAngle);
 
   // TODO Compute points on this new line ???? made by above angles, at distance of scale from origin 
   tempAbovePoint = { 
@@ -197,3 +205,6 @@ MapLine.prototype.makePolys = function(doublePoints) {
   }
   return polys;
 };
+
+// comment out once in browser
+exports.MapLine = MapLine;
