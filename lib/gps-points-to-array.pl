@@ -3,13 +3,11 @@
 use strict;
 use warnings;
 
-# my $file = 'correct-points';
-my $file = $1;
+my @slurp = <>; 
 
-open my $info, $file or die "Could not open $file: $!";
+my $str = "[";
+foreach my $line (@slurp) { 
 
-my $str="[";
-while( my $line = <$info>)  {   
     chomp($line);
     if ($. % 2 == 1) {
         $str = $str . $line . ", ";
@@ -22,4 +20,4 @@ while( my $line = <$info>)  {
     }
 }
 
-close $info;
+# close $info;
