@@ -181,4 +181,23 @@ MapLine.prototype.getLongPoints = function() {
 
 
 
+MapLine.prototype.markFeatures = function() {
+  var featureArray = [];
+  for (var j = 0, max = this.mainLine.length; j < max; j++) {
+    var feature = {
+      type: 'Feature',
+      properties: {
+        title: this.speedPoints[j],
+        },
+        geometry: {
+            type: 'Point',
+            coordinates: [this.mainLine[j][1], this.mainLine[j][0] ]
+        }
+    };
+    // feature.setOpacity(0);
+    featureArray.push(feature);
+  }
+return featureArray;
+};
+
 
