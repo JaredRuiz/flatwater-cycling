@@ -17,16 +17,31 @@
         <div id='map'></div>
         <script>
           L.mapbox.accessToken = 'pk.eyJ1Ijoic3doYzEwNjYiLCJhIjoiS2xvdHlOOCJ9.AuwjSDNFKVae2_skfgLouA';
-          var map = L.mapbox.map('map', 'examples.map-i86nkdio').setView([40, -96], 6);
+          
 
-          // http://leafletjs.com/reference.html#polyline
+var map = L.mapbox.map('map', 'examples.map-i86nkdio');
+
+var ml = new MapLine(oldLine,  speedLine);
+
+
+// center and zoom on map
+  map.fitBounds([
+	  [ml.south(), ml.west()],
+	  [ml.north(), ml.east()],
+  ]);
+
+
+// http://leafletjs.com/reference.html#polyline
           var polyline_options = {
-            color: '#FF0000'
-            // color: 'green'
+            color: '#FF0000',
+            // color: 'green',
+            // stroke: false  
+            weight: .5
+
             // line-width: 0.01;
           };
 
-          var ml = new MapLine(oldLine,  speedLine);
+
 
           for (var j = 0, max = ml.polygonPoints.length; j < max; j++) {
             var poly = L.polygon(ml.polygonPoints[j], polyline_options);

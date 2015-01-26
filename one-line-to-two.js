@@ -86,7 +86,8 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
 
   var scale = speedPoint * .0001;
   
-  /// Compute points on this new line made by above angles, at distance 1 from origin 
+  /// Compute points on this new line made by above angles, at
+  /// distance 1 from origin
   var tempAbovePoint = [scale*this.cos(aboveAngle), scale*this.sin(aboveAngle)];
   var tempBelowPoint = [scale*this.cos(belowAngle), scale*this.sin(belowAngle)];
 
@@ -139,3 +140,45 @@ MapLine.prototype.makePolys = function() {
   }
   return polys;
 };
+
+MapLine.prototype.west = function() {
+  var latPoints = this.getLatPoints();
+  var i = latPoints.indexOf(Math.min.apply(Math, latPoints));
+  return latPoints[i];
+};
+
+MapLine.prototype.east = function() {
+  var latPoints = this.getLatPoints();
+  var i = latPoints.indexOf(Math.max.apply(Math, latPoints));
+  return latPoints[i];
+};
+
+MapLine.prototype.south = function() {
+  var longPoints = this.getLongPoints();
+  var i = longPoints.indexOf(Math.min.apply(Math, longPoints));
+  return longPoints[i];
+};
+
+MapLine.prototype.north = function() {
+  var longPoints = this.getLongPoints();
+  var i = longPoints.indexOf(Math.max.apply(Math, longPoints));
+  return longPoints[i];
+};
+
+MapLine.prototype.getLatPoints = function() {
+  var arr = this.mainLine.map(function(a) {
+    return a[1];
+  });
+  return arr;
+};
+
+MapLine.prototype.getLongPoints = function() {
+  var arr = this.mainLine.map(function(a) {
+    return a[0];
+  });
+  return arr;
+};
+
+
+
+
