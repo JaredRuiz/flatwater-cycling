@@ -65,7 +65,9 @@ for (var j = 0, max = ml.polygonPoints.length; j < max; j++) {
 var geojson = ml.markFeatures();
 
 // add all markers to map
-var myLayer = L.mapbox.featureLayer(geojson)
+// var myLayer = L.mapbox.featureLayer(geojson)
+
+var myLayer = L.mapbox.gridLayer(geojson)
 // TODO still not sure how to hide markers on map...
 // .setFilter(function() { return false; })
   .addTo(map);

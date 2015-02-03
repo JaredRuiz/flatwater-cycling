@@ -3,13 +3,13 @@
 use strict;
 use warnings;
 
-my @slurp = <>; 
-
 my $str = "[";
-foreach my $line (@slurp) { 
 
+my @slurp = <>; 
+foreach my $line (@slurp) { 
     chomp($line);
     if ($. % 2 == 1) {
+    # if ($. % 2 == 0) {
         $str = $str . $line . ", ";
     }
     else {
