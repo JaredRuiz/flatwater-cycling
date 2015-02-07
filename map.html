@@ -19,23 +19,7 @@
           L.mapbox.accessToken = 'pk.eyJ1Ijoic3doYzEwNjYiLCJhIjoiS2xvdHlOOCJ9.AuwjSDNFKVae2_skfgLouA';
 
 
-'rgb(120, 120, 240)'
-
-function colorToHex(color) {
-    if (color.substr(0, 1) === '#') {
-        return color;
-    }
-    var digits = /(.*?)rgb\((\d+), (\d+), (\d+)\)/.exec(color);
-
-    var red = parseInt(digits[2]);
-    var green = parseInt(digits[3]);
-    var blue = parseInt(digits[4]);
-
-    var rgb = blue | (green << 8) | (red << 16);
-    return digits[1] + '#' + rgb.toString(16);
-};
-          
-
+       
 var map = L.mapbox.map('map', 'examples.map-i86nkdio');
 
 // make a MapLine object
@@ -50,7 +34,6 @@ var ml = new MapLine(oldLine,  speedLine);
 // style options for the line
 var polyline_options = {
   color: '#FF0000',
-  // stroke: false  
   weight: .5
 };
 
@@ -64,13 +47,15 @@ for (var j = 0, max = ml.polygonPoints.length; j < max; j++) {
 // mark features to scroll over
 var geojson = ml.markFeatures();
 
-// add all markers to map
-// var myLayer = L.mapbox.featureLayer(geojson)
+var myLayer = L.mapbox.featureLayer(geojson)
 
-var myLayer = L.mapbox.gridLayer(geojson)
+// add all markers to map
 // TODO still not sure how to hide markers on map...
+// var myLayer = L.mapbox.gridLayer(geojson)
+var myLayer = L.mapbox.featureLayer(geojson)
 // .setFilter(function() { return false; })
   .addTo(map);
+
 
 myLayer.on('mouseover', function(e) {
     e.layer.openPopup();
