@@ -186,15 +186,22 @@ MapLine.prototype.markFeatures = function() {
       type: 'Feature',
       properties: {
         title: this.speedPoints[j],
-        'marker-color': '#54a743',
-        'stroke': '#428334',
+        // 'marker-color': '#54a743',
+        // 'stroke': '#428334',
         },
         geometry: {
             type: 'Point',
             coordinates: [this.mainLine[j][1], this.mainLine[j][0] ]
-        }
+        },
+      // "style": {
+        // fillOpacity: 0
+        // "fillStyle": "rgb(200, 0, 0, 0.6)",
+        // "marker": {
+        //   "radius": feature
+        // }
+      // }
     };
-    // feature.setOpacity(0);
+    // 0.setOpacity(0);
     featureArray.push(feature);
   }
 return featureArray;

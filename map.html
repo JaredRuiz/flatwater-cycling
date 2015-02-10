@@ -54,31 +54,48 @@ var polyline_options = {
   weight: .5
 };
 
+// TODO need to attach speed point to each polygon point...
+// then this will work!!!
 // add line to map, point by point
 for (var j = 0, max = ml.polygonPoints.length; j < max; j++) {
   var poly = L.polygon(ml.polygonPoints[j], polyline_options);
+  var speed = ml.speedPoints[j];
+
+  console.log(speed);
+
+  poly.on('mouseover', function(e) {
+    // var speed = e.layer.feature.properties.title;
+    coordinates.innerHTML = speed + "mph";
+  });
+  poly.on('mouseout', function(e) {
+    coordinates.innerHTML = "";
+  });
   poly.addTo(map);
 }
 
+
+
 // mark features to scroll over
-var geojson = ml.markFeatures();
+// var geojson = ml.markFeatures();
 
 // add all markers to map
 // TODO still not sure how to hide markers on map...
 
 // TODO: figure out how to do UTFGRID object...
 // var myLayer = L.mapbox.gridLayer(utfgrid)
-var myLayer = L.mapbox.featureLayer(geojson)
-// .setFilter(function() { return false; })
-  .addTo(map);
+// var myLayer = L.mapbox.featureLayer(geojson)
+// // .setFilter(function() { return false; })
+//   .addTo(map);
 
-myLayer.on('mouseover', function(e) {
-var speed = e.layer.feature.properties.title;
-  coordinates.innerHTML = speed + " mph";
-});
-myLayer.on('mouseout', function(e) {
-  coordinates.innerHTML = "";
-});
+// var myLayer = L.geoJson(geojson).addTo(map);
+
+// myLayer.on('mouseover', function(e) {
+// var speed = e.layer.feature.properties.title;
+//   coordinates.innerHTML = speed + " mph";
+// });
+// myLayer.on('mouseout', function(e) {
+//   coordinates.innerHTML = "";
+// });
 
         </script>
       </body>
