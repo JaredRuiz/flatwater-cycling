@@ -186,6 +186,8 @@ MapLine.prototype.markFeatures = function() {
       type: 'Feature',
       properties: {
         title: this.speedPoints[j],
+        'marker-color': '#54a743',
+        'stroke': '#428334',
         },
         geometry: {
             type: 'Point',

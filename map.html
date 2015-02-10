@@ -8,21 +8,38 @@
         <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.1/mapbox.css' rel='stylesheet' />
         <style>
           body { margin:0; padding:0; }
-          #map { position:absolute; top:0; bottom:0; width:100%; line-width: 0.01; }
+          #map { position:absolute; top:0; bottom:0; width:100%; }
+
+/* pop-up style */
+pre.ui-coordinates {
+  position:absolute;
+  bottom:10px;
+  left:10px;
+  padding:5px 10px;
+  background:rgba(0,0,0,0.5);
+  color:#fff;
+  font-size:11px;
+  line-height:18px;
+  border-radius:3px;
+  }
+
         </style>
         <script src="array.js"></script>
         <script src="one-line-to-two.js"></script>
       </head>
       <body>
         <div id='map'></div>
+  <pre id='coordinates' class='ui-coordinates'></pre>
         <script>
           L.mapbox.accessToken = 'pk.eyJ1Ijoic3doYzEwNjYiLCJhIjoiS2xvdHlOOCJ9.AuwjSDNFKVae2_skfgLouA';
 
+var coordinates = document.getElementById('coordinates');
 
-       
+// create a map object
 var map = L.mapbox.map('map', 'examples.map-i86nkdio');
+// var map = L.mapbox.map('map');
 
-// make a MapLine object
+// make a MapLine object; this holds all necessary line info
 var ml = new MapLine(oldLine,  speedLine);
 
 // center and zoom on map
@@ -37,31 +54,30 @@ var polyline_options = {
   weight: .5
 };
 
-// add line to map
+// add line to map, point by point
 for (var j = 0, max = ml.polygonPoints.length; j < max; j++) {
   var poly = L.polygon(ml.polygonPoints[j], polyline_options);
-  // var poly = L.polygon(ml.polygonPoints[j], generatePOptions(ml.polygonPoints[j]));
   poly.addTo(map);
 }
 
 // mark features to scroll over
 var geojson = ml.markFeatures();
 
-var myLayer = L.mapbox.featureLayer(geojson)
-
 // add all markers to map
 // TODO still not sure how to hide markers on map...
-// var myLayer = L.mapbox.gridLayer(geojson)
+
+// TODO: figure out how to do UTFGRID object...
+// var myLayer = L.mapbox.gridLayer(utfgrid)
 var myLayer = L.mapbox.featureLayer(geojson)
 // .setFilter(function() { return false; })
   .addTo(map);
 
-
 myLayer.on('mouseover', function(e) {
-    e.layer.openPopup();
+var speed = e.layer.feature.properties.title;
+  coordinates.innerHTML = speed + " mph";
 });
 myLayer.on('mouseout', function(e) {
-    e.layer.closePopup();
+  coordinates.innerHTML = "";
 });
 
         </script>
