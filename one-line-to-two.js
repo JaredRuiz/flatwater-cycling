@@ -75,8 +75,6 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
   // var ang = rad/diffPoint[0];
   var ang = diffPoint[0]/rad;
 
-
-
   /// Since x=rCos(a) and y=rSin(a) (for an angle a) and we know x, y, and r, we compute theta
   var theta = Math.acos(ang);
 
@@ -84,7 +82,7 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
   var aboveAngle = parseFloat((theta + this.pi()/2));
   var belowAngle = parseFloat((theta - this.pi()/2));
 
-  var scale = speedPoint * .0001;
+  var scale = speedPoint * .00005;
   
   /// Compute points on this new line made by above angles, at
   /// distance 1 from origin
@@ -131,11 +129,15 @@ MapLine.prototype.generateDoublePoints = function() {
 }
 
 MapLine.prototype.makePolys = function() {
-  var polys = [];
+  var polys = {
+    pos: [],
+    speed: []
+  };
   for (var j = 0, max = this.aboveLinePoints.length; j < max; j++) {
     if (j < this.aboveLinePoints.length-1) {
-      polys.push([this.aboveLinePoints[j], this.aboveLinePoints[j+1],
+      polys.pos.push([this.aboveLinePoints[j], this.aboveLinePoints[j+1],
                   this.belowLinePoints[j+1], this.belowLinePoints[j]]);
+      polys.speed.push(this.speedPoints[j]);
     }
   }
   return polys;
@@ -178,35 +180,6 @@ MapLine.prototype.getLongPoints = function() {
   });
   return arr;
 };
-
-MapLine.prototype.markFeatures = function() {
-  var featureArray = [];
-  for (var j = 0, max = this.mainLine.length; j < max; j++) {
-    var feature = {
-      type: 'Feature',
-      properties: {
-        title: this.speedPoints[j],
-        // 'marker-color': '#54a743',
-        // 'stroke': '#428334',
-        },
-        geometry: {
-            type: 'Point',
-            coordinates: [this.mainLine[j][1], this.mainLine[j][0] ]
-        },
-      // "style": {
-        // fillOpacity: 0
-        // "fillStyle": "rgb(200, 0, 0, 0.6)",
-        // "marker": {
-        //   "radius": feature
-        // }
-      // }
-    };
-    // 0.setOpacity(0);
-    featureArray.push(feature);
-  }
-return featureArray;
-};
-
 
 ///////////////
 // TODO Color stuff

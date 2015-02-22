@@ -9,95 +9,71 @@
         <style>
           body { margin:0; padding:0; }
           #map { position:absolute; top:0; bottom:0; width:100%; }
-
-/* pop-up style */
-pre.ui-coordinates {
-  position:absolute;
-  bottom:10px;
-  left:10px;
-  padding:5px 10px;
-  background:rgba(0,0,0,0.5);
-  color:#fff;
-  font-size:11px;
-  line-height:18px;
-  border-radius:3px;
-  }
-
+          /* pop-up style */
+         pre.ui-coordinates {
+           position:absolute;
+           bottom:10px;
+           left:10px;
+           padding:5px 10px;
+           background:rgba(0,0,0,0.5);
+           color:#fff;
+           font-size:11px;
+           line-height:18px;
+           border-radius:3px;
+         }
         </style>
         <script src="array.js"></script>
         <script src="one-line-to-two.js"></script>
       </head>
       <body>
         <div id='map'></div>
-  <pre id='coordinates' class='ui-coordinates'></pre>
+        <pre id='coordinates' class='ui-coordinates'></pre>
         <script>
-          L.mapbox.accessToken = 'pk.eyJ1Ijoic3doYzEwNjYiLCJhIjoiS2xvdHlOOCJ9.AuwjSDNFKVae2_skfgLouA';
+  // TODO may be a good idea to pull all of this to an external file too...
+  L.mapbox.accessToken = 'pk.eyJ1Ijoic3doYzEwNjYiLCJhIjoiS2xvdHlOOCJ9.AuwjSDNFKVae2_skfgLouA';
 
 var coordinates = document.getElementById('coordinates');
 
-// create a map object
+// create a map object; second param gives style option for map
 var map = L.mapbox.map('map', 'examples.map-i86nkdio');
-// var map = L.mapbox.map('map');
 
 // make a MapLine object; this holds all necessary line info
 var ml = new MapLine(oldLine,  speedLine);
 
 // center and zoom on map
-  map.fitBounds([
-	  [ml.south(), ml.west()],
-	  [ml.north(), ml.east()],
-  ]);
+map.fitBounds([
+	[ml.south(), ml.west()],
+	[ml.north(), ml.east()],
+]);
 
-// style options for the line
-var polyline_options = {
-  color: '#FF0000',
-  weight: .5
-};
+for (var j = 0, max = ml.polygonPoints.pos.length; j < max; j++) {
+  // make a geojson object out of the polygon; this allows us to easily access 
+  // the speed associated with each polygon, and to add it to the map
+  var poly = L.polygon(ml.polygonPoints.pos[j]),
+  geojson = poly.toGeoJSON();
+  // attach the speed to the geojson object
+  geojson.properties.speed = ml.polygonPoints.speed[j];
 
-// TODO need to attach speed point to each polygon point...
-// then this will work!!!
-// add line to map, point by point
-for (var j = 0, max = ml.polygonPoints.length; j < max; j++) {
-  var poly = L.polygon(ml.polygonPoints[j], polyline_options);
-  var speed = ml.speedPoints[j];
+  // add the geojson to the map as a featureLayer
+  var myLayer = L.mapbox.featureLayer(geojson)
+   // style options for line
+    .setStyle( {
+      fillColor: '#FF0000',
+      color: '#FF0000',
+      weight: .5
+    })
+    .addTo(map);
 
-  console.log(speed);
-
-  poly.on('mouseover', function(e) {
-    // var speed = e.layer.feature.properties.title;
-    coordinates.innerHTML = speed + "mph";
+  myLayer.on('mouseover', function(e) {
+    var spd = this.getGeoJSON().properties.speed;
+    coordinates.innerHTML = spd + " mph";
   });
-  poly.on('mouseout', function(e) {
+  myLayer.on('mouseout', function(e) {
     coordinates.innerHTML = "";
   });
-  poly.addTo(map);
 }
 
-
-
-// mark features to scroll over
-// var geojson = ml.markFeatures();
-
-// add all markers to map
-// TODO still not sure how to hide markers on map...
-
-// TODO: figure out how to do UTFGRID object...
-// var myLayer = L.mapbox.gridLayer(utfgrid)
-// var myLayer = L.mapbox.featureLayer(geojson)
-// // .setFilter(function() { return false; })
-//   .addTo(map);
-
-// var myLayer = L.geoJson(geojson).addTo(map);
-
-// myLayer.on('mouseover', function(e) {
-// var speed = e.layer.feature.properties.title;
-//   coordinates.innerHTML = speed + " mph";
-// });
-// myLayer.on('mouseout', function(e) {
-//   coordinates.innerHTML = "";
-// });
-
-        </script>
+</script>
       </body>
     </html>
 
