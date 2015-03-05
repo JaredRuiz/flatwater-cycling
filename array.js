@@ -7104,7 +7104,7 @@ var speedLine = [
 0.0,
 ];
 
-console.log(oldLine.length);
-console.log(speedLine.length);
+// console.log(oldLine.length);
+// console.log(speedLine.length);xsggxs
 
 

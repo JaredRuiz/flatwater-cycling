@@ -10,7 +10,10 @@ function MapLine(linePoints, speedPoints) {
     this.speedPoints.push(speedPoints[j]);
   } // for
 
-  this.doublePoints = this.generateDoublePoints(this.mainLine, this.speedPoints);
+  var minSpeed = Math.min.apply(null, this.speedPoints),
+        maxSpeed = Math.max.apply(null, this.speedPoints);
+
+  this.doublePoints = this.generateDoublePoints(minSpeed, maxSpeed);
   this.aboveLinePoints = this.doublePoints.above;
   this.belowLinePoints = this.doublePoints.below;
 
@@ -52,7 +55,7 @@ MapLine.prototype.asin = function(a) {
 
 MapLine.prototype.pi = function() { return this.makeRad(Math.PI) }
 
-MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
+MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint, scaleFactor) {
   // helper functions
   var makeRad = function(num) { return parseFloat(num).toFixed(5); }
   var _c = function(p1, p2, idx) { return p2[idx] - p1[idx]; }
@@ -82,8 +85,11 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
   var aboveAngle = parseFloat((theta + this.pi()/2));
   var belowAngle = parseFloat((theta - this.pi()/2));
 
-  var scale = speedPoint * .00005;
-  
+  // var scale = speedPoint * .00005;
+  var scale = speedPoint * .0001;
+  // var scale = scaleFactor(speedPoint);
+  // console.log(scale);
+    
   /// Compute points on this new line made by above angles, at
   /// distance 1 from origin
   var tempAbovePoint = [scale*this.cos(aboveAngle), scale*this.sin(aboveAngle)];
@@ -102,7 +108,9 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
   return returnPoints;
 } // makeOnePointTwo
 
-MapLine.prototype.generateDoublePoints = function() {
+MapLine.prototype.generateDoublePoints = function(min, max) {
+
+  console.log(max);
   
   if (this.mainLine.length !== this.speedPoints.length) {
     throw new Error("array lengths do not match");
@@ -112,6 +120,14 @@ MapLine.prototype.generateDoublePoints = function() {
   for (var j = 0, max = this.mainLine.length; j < max; j++) {
     if (j < this.mainLine.length-1) {
       var newPoints = this.makeOnePointTwo(this.mainLine[j], this.mainLine[j+1], this.speedPoints[j]);
+      //   var newPoints = this.makeOnePointTwo(this.mainLine[j], this.mainLine[j+1], this.speedPoints[j], function(speed) {
+      //   var scale = .0001,
+      //         minScale = scale * min,
+      //         maxScale = scale * max,
+      //         m = (maxScale - minScale)/(min - max);
+      //   return m*(speed - min) + maxScale;
+      // });
+
       // console.log("newpoints: " + JSON.stringify(newPoints[0]));
       newPoints[0][0] = newPoints[0][0].filter(function(a) { return !isNaN(a); });
       newPoints[0][1] = newPoints[0][1].filter(function(a) { return !isNaN(a); });
@@ -137,7 +153,8 @@ MapLine.prototype.makePolys = function() {
     if (j < this.aboveLinePoints.length-1) {
       polys.pos.push([this.aboveLinePoints[j], this.aboveLinePoints[j+1],
                   this.belowLinePoints[j+1], this.belowLinePoints[j]]);
-      polys.speed.push(this.speedPoints[j]);
+      var speedIdx = Math.floor(j/2);
+      polys.speed.push(this.speedPoints[speedIdx]);
     }
   }
   return polys;
