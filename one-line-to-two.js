@@ -10,7 +10,10 @@ function MapLine(linePoints, speedPoints) {
     this.speedPoints.push(speedPoints[j]);
   } // for
 
-  this.doublePoints = this.generateDoublePoints(this.mainLine, this.speedPoints);
+  var minSpeed = Math.min.apply(null, this.speedPoints),
+        maxSpeed = Math.max.apply(null, this.speedPoints);
+
+  this.doublePoints = this.generateDoublePoints(minSpeed, maxSpeed);
   this.aboveLinePoints = this.doublePoints.above;
   this.belowLinePoints = this.doublePoints.below;
 
@@ -52,7 +55,7 @@ MapLine.prototype.asin = function(a) {
 
 MapLine.prototype.pi = function() { return this.makeRad(Math.PI) }
 
-MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
+MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint, scaleFactor) {
   // helper functions
   var makeRad = function(num) { return parseFloat(num).toFixed(5); }
   var _c = function(p1, p2, idx) { return p2[idx] - p1[idx]; }
@@ -75,8 +78,6 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
   // var ang = rad/diffPoint[0];
   var ang = diffPoint[0]/rad;
 
-
-
   /// Since x=rCos(a) and y=rSin(a) (for an angle a) and we know x, y, and r, we compute theta
   var theta = Math.acos(ang);
 
@@ -84,9 +85,13 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
   var aboveAngle = parseFloat((theta + this.pi()/2));
   var belowAngle = parseFloat((theta - this.pi()/2));
 
+  // var scale = speedPoint * .00005;
   var scale = speedPoint * .0001;
-  
-  /// Compute points on this new line made by above angles, at distance 1 from origin 
+  // var scale = scaleFactor(speedPoint);
+  // console.log(scale);
+    
+  /// Compute points on this new line made by above angles, at
+  /// distance 1 from origin
   var tempAbovePoint = [scale*this.cos(aboveAngle), scale*this.sin(aboveAngle)];
   var tempBelowPoint = [scale*this.cos(belowAngle), scale*this.sin(belowAngle)];
 
@@ -103,7 +108,9 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint) {
   return returnPoints;
 } // makeOnePointTwo
 
-MapLine.prototype.generateDoublePoints = function() {
+MapLine.prototype.generateDoublePoints = function(min, max) {
+
+  console.log(max);
   
   if (this.mainLine.length !== this.speedPoints.length) {
     throw new Error("array lengths do not match");
@@ -113,6 +120,14 @@ MapLine.prototype.generateDoublePoints = function() {
   for (var j = 0, max = this.mainLine.length; j < max; j++) {
     if (j < this.mainLine.length-1) {
       var newPoints = this.makeOnePointTwo(this.mainLine[j], this.mainLine[j+1], this.speedPoints[j]);
+      //   var newPoints = this.makeOnePointTwo(this.mainLine[j], this.mainLine[j+1], this.speedPoints[j], function(speed) {
+      //   var scale = .0001,
+      //         minScale = scale * min,
+      //         maxScale = scale * max,
+      //         m = (maxScale - minScale)/(min - max);
+      //   return m*(speed - min) + maxScale;
+      // });
+
       // console.log("newpoints: " + JSON.stringify(newPoints[0]));
       newPoints[0][0] = newPoints[0][0].filter(function(a) { return !isNaN(a); });
       newPoints[0][1] = newPoints[0][1].filter(function(a) { return !isNaN(a); });
@@ -130,12 +145,73 @@ MapLine.prototype.generateDoublePoints = function() {
 }
 
 MapLine.prototype.makePolys = function() {
-  var polys = [];
+  var polys = {
+    pos: [],
+    speed: []
+  };
   for (var j = 0, max = this.aboveLinePoints.length; j < max; j++) {
     if (j < this.aboveLinePoints.length-1) {
-      polys.push([this.aboveLinePoints[j], this.aboveLinePoints[j+1],
+      polys.pos.push([this.aboveLinePoints[j], this.aboveLinePoints[j+1],
                   this.belowLinePoints[j+1], this.belowLinePoints[j]]);
+      var speedIdx = Math.floor(j/2);
+      polys.speed.push(this.speedPoints[speedIdx]);
     }
   }
   return polys;
 };
+
+MapLine.prototype.west = function() {
+  var latPoints = this.getLatPoints();
+  var i = latPoints.indexOf(Math.min.apply(Math, latPoints));
+  return latPoints[i];
+};
+
+MapLine.prototype.east = function() {
+  var latPoints = this.getLatPoints();
+  var i = latPoints.indexOf(Math.max.apply(Math, latPoints));
+  return latPoints[i];
+};
+
+MapLine.prototype.south = function() {
+  var longPoints = this.getLongPoints();
+  var i = longPoints.indexOf(Math.min.apply(Math, longPoints));
+  return longPoints[i];
+};
+
+MapLine.prototype.north = function() {
+  var longPoints = this.getLongPoints();
+  var i = longPoints.indexOf(Math.max.apply(Math, longPoints));
+  return longPoints[i];
+};
+
+MapLine.prototype.getLatPoints = function() {
+  var arr = this.mainLine.map(function(a) {
+    return a[1];
+  });
+  return arr;
+};
+
+MapLine.prototype.getLongPoints = function() {
+  var arr = this.mainLine.map(function(a) {
+    return a[0];
+  });
+  return arr;
+};
+
+///////////////
+// TODO Color stuff
+
+// 'rgb(120, 120, 240)'
+// function colorToHex(color) {
+//     if (color.substr(0, 1) === '#') {
+//         return color;
+//     }
+//     var digits = /(.*?)rgb\((\d+), (\d+), (\d+)\)/.exec(color);
+
+//     var red = parseInt(digits[2]);
+//     var green = parseInt(digits[3]);
+//     var blue = parseInt(digits[4]);
+
+//     var rgb = blue | (green << 8) | (red << 16);
+//     return digits[1] + '#' + rgb.toString(16);
+// };

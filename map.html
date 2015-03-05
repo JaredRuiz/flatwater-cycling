@@ -8,32 +8,110 @@
         <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.1/mapbox.css' rel='stylesheet' />
         <style>
           body { margin:0; padding:0; }
-          #map { position:absolute; top:0; bottom:0; width:100%; line-width: 0.01; }
+          #map { position:absolute; top:0; bottom:0; width:100%; }
+          /* pop-up style */
+         pre.ui-coordinates {
+           position:absolute;
+           bottom:10px;
+           left:10px;
+           padding:5px 10px;
+           background:rgba(0,0,0,0.5);
+           color:#fff;
+           font-size:11px;
+           line-height:18px;
+           border-radius:3px;
+         }
         </style>
         <script src="array.js"></script>
         <script src="one-line-to-two.js"></script>
       </head>
       <body>
         <div id='map'></div>
+        <pre id='coordinates' class='ui-coordinates'></pre>
         <script>
-          L.mapbox.accessToken = 'pk.eyJ1Ijoic3doYzEwNjYiLCJhIjoiS2xvdHlOOCJ9.AuwjSDNFKVae2_skfgLouA';
-          var map = L.mapbox.map('map', 'examples.map-i86nkdio').setView([40, -96], 6);
+  // TODO may be a good idea to pull all of this to an external file too...
+  L.mapbox.accessToken = 'pk.eyJ1Ijoic3doYzEwNjYiLCJhIjoiS2xvdHlOOCJ9.AuwjSDNFKVae2_skfgLouA';
 
-          // http://leafletjs.com/reference.html#polyline
-          var polyline_options = {
-            color: '#FF0000'
-            // color: 'green'
-            // line-width: 0.01;
-          };
+var coordinates = document.getElementById('coordinates');
 
-          var ml = new MapLine(oldLine,  speedLine);
+// create a map object; second param gives style option for map
+var map = L.mapbox.map('map', 'examples.map-i86nkdio');
 
-          for (var j = 0, max = ml.polygonPoints.length; j < max; j++) {
-            var poly = L.polygon(ml.polygonPoints[j], polyline_options);
-            poly.addTo(map);
-          }
+// make a MapLine object; this holds all necessary line info
+var ml = new MapLine(oldLine,  speedLine);
 
-        </script>
+// center and zoom on map
+map.fitBounds([
+	[ml.south(), ml.west()],
+	[ml.north(), ml.east()],
+]);
+
+for (var j = 0, max = ml.polygonPoints.pos.length; j < max; j++) {
+  // make a geojson object out of the polygon; this allows us to easily access 
+  // the speed associated with each polygon, and to add it to the map
+  var poly = L.polygon(ml.polygonPoints.pos[j]),
+  geojson = poly.toGeoJSON();
+  // attach the speed to the geojson object
+  var speed = ml.polygonPoints.speed[j];
+  geojson.properties.speed = speed;
+  
+  // add the geojson to the map as a featureLayer
+  var myLayer = L.mapbox.featureLayer(geojson)
+  // style options for line: changing the color based off of the 
+  // speed (will enhance in future)
+  var style = {};
+      if (parseInt(speed, 10) <= 3) {
+        style ={ 
+          // color of interior of polygon
+          fillColor: '#8B0C7D',
+          // color of edge/border of polygon
+          color: '#8B0C7',
+          weight: .5
+        };
+      } else if (parseInt(speed, 10) <= 5) {
+       style ={ 
+         fillColor: '#B327A3',
+         color: '#B327A3',
+         weight: .5
+       };
+      } else if (parseInt(speed, 10) <= 9) {
+       style ={ 
+         fillColor: '#DF3BCB',
+         color: '#DF3BCB',
+         weight: .5
+       };
+      } else if (parseInt(speed, 10) <= 12) {
+       style ={ 
+         fillColor: '#DC64CE',
+         color: '#DC64CE',
+         weight: .5
+       };
+      } else if (parseInt(speed, 10) <= 15) {
+       style ={ 
+         fillColor: '#D250C3',
+         color: '#D250C3',
+         weight: .5
+       };
+      } else {
+        style ={ 
+          fillColor: '#FA9FEF',
+          color: '#FA9FEF',
+          weight: .5
+        };
+      }
+  myLayer.setStyle(style).addTo(map);
+
+  // update speed on mouseover
+  myLayer.on('mouseover', function(e) {
+    var spd = this.getGeoJSON().properties.speed;
+    coordinates.innerHTML = spd + " mph";
+  });
+  myLayer.on('mouseout', function(e) {
+    coordinates.innerHTML = "";
+  });
+}
+
+</script>
       </body>
     </html>
 
