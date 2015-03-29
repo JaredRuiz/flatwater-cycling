@@ -1,14 +1,79 @@
 "use strict"
-function MapLine(linePoints, speedPoints) {
-  this.mainLine = []; //arr.map(function(a) { return a; });
-  for (var j = 0, max = linePoints.length; j < max; j++) {
-    this.mainLine.push(linePoints[j]);
-  } // for
 
+  var makeRad = function(num) { return parseFloat(num).toFixed(5); }
+  var _c = function(p1, p2, idx) { return p2[idx] - p1[idx]; }
+  var _xc = function(p1, p2) { return _c(p1, p2, 0); } 
+  var _yc = function(p1, p2) { return _c(p1, p2, 1); }
+  var dist = function(p1, p2) { 
+    return Math.sqrt(Math.pow(_xc(p1, p2), 2) + Math.pow(_yc(p1, p2), 2));
+  }
+
+var toRad = function(deg) {
+  return deg*Math.PI/180;
+};
+
+
+function MapLine(data) {
+  this.mainLine = []; 
   this.speedPoints = [];
-  for (var j = 0, max = speedPoints.length; j < max; j++) {
-    this.speedPoints.push(speedPoints[j]);
-  } // for
+
+  for (var j = 0, max = data.length; j < max; j++) {
+    var dPoint = data[j];
+    var arr = [ dPoint.lat, dPoint.lon ];
+    this.mainLine.push(arr);
+    
+    if (j >=1) {
+      var distance = dist(this.mainLine[j-1], this.mainLine[j]);
+    
+      var ldPoint = data[j-1];
+      var oldTime = new Date();
+      oldTime.setHours(ldPoint.hour, ldPoint.minute, ldPoint.second);
+      var newTime = new Date();
+      newTime.setHours(dPoint.hour, dPoint.minute, dPoint.second);
+
+      // var time = (newTime.getTime() - oldTime.getTime());
+      var time = (newTime.getTime() - oldTime.getTime())/1000;
+
+      var R = 6371; // km
+      // var R = 3958.755866;
+
+
+      var dLat = makeRad(data[j].lat-data[j-1].lat);
+      var dLon =makeRad(data[j].lon-data[j-1].lon);
+      var lat1 = makeRad(data[j-1].lat);
+      var lat2 = makeRad(data[j].lat);
+
+      var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+      var d = R * c;
+
+      d = d * 0.621371;
+
+      // console.log("deeeeeeeee: " + d);
+
+      // var speed = distance/time;
+
+      var speed = d/time;
+
+
+      console.log("distance: " + distance);
+      console.log("time: " + time);
+      console.log("speed: " + speed);
+      this.speedPoints.push(speed);
+    } else {
+      this.speedPoints.push(0);
+    }
+    
+  }
+
+  // for (var j = 0, max = linePoints.length; j < max; j++) {
+  //   this.mainLine.push(linePoints[j]);
+  // } // for
+
+  // for (var j = 0, max = speedPoints.length; j < max; j++) {
+  //   this.speedPoints.push(speedPoints[j]);
+  // } // for
 
   var minSpeed = Math.min.apply(null, this.speedPoints),
         maxSpeed = Math.max.apply(null, this.speedPoints);
@@ -57,14 +122,14 @@ MapLine.prototype.pi = function() { return this.makeRad(Math.PI) }
 
 MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint, scaleFactor) {
   // helper functions
-  var makeRad = function(num) { return parseFloat(num).toFixed(5); }
-  var _c = function(p1, p2, idx) { return p2[idx] - p1[idx]; }
-  var _xc = function(p1, p2) { return _c(p1, p2, 0); } 
-  var _yc = function(p1, p2) { return _c(p1, p2, 1); }
-  var dist = function(p1, p2) { 
-    return Math.sqrt(Math.pow(_xc(p1, p2), 2) + Math.pow(_yc(p1, p2), 2));
-  }
-  // take difference betwen points in order to shift to origin
+  // var makeRad = function(num) { return parseFloat(num).toFixed(5); }
+  // var _c = function(p1, p2, idx) { return p2[idx] - p1[idx]; }
+  // var _xc = function(p1, p2) { return _c(p1, p2, 0); } 
+  // var _yc = function(p1, p2) { return _c(p1, p2, 1); }
+  // var dist = function(p1, p2) { 
+  //   return Math.sqrt(Math.pow(_xc(p1, p2), 2) + Math.pow(_yc(p1, p2), 2));
+  // }
+  // // take difference betwen points in order to shift to origin
   var diffPoint = [_xc(point1, point2), _yc(point1, point2)];
 
   /////////////////////////////////////////////////////

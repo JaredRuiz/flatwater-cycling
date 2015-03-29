@@ -22,11 +22,35 @@
            border-radius:3px;
          }
         </style>
-        <script src="array.js"></script>
+        <!-- <script src="array.js"></script> -->
+        <script src="new_array.js"></script>
         <script src="one-line-to-two.js"></script>
       </head>
       <body>
+
+<table>
+<th>
+<h2>
+Jared Ruiz
+<br>Kick-Ass Rider
+</h2>
+   </th>
+<th>
+<h2>
+Jared Ruiz
+<br>Kick-Ass Rider
+</h2>
+   </th>
+
+  <th>
         <div id='map'></div>
+  </th>
+</tr>
+</table>
+
+        <button id='snap' class='ui-button'>Take a snapshot</button>
+        <div id='snapshot'></div>
+
         <pre id='coordinates' class='ui-coordinates'></pre>
         <script>
   // TODO may be a good idea to pull all of this to an external file too...
@@ -38,7 +62,8 @@ var coordinates = document.getElementById('coordinates');
 var map = L.mapbox.map('map', 'examples.map-i86nkdio');
 
 // make a MapLine object; this holds all necessary line info
-var ml = new MapLine(oldLine,  speedLine);
+<!-- var ml = new MapLine(oldLine,  speedLine); -->
+var ml = new MapLine(dataArray);
 
 // center and zoom on map
 map.fitBounds([
@@ -104,7 +129,7 @@ for (var j = 0, max = ml.polygonPoints.pos.length; j < max; j++) {
   // update speed on mouseover
   myLayer.on('mouseover', function(e) {
     var spd = this.getGeoJSON().properties.speed;
-    coordinates.innerHTML = spd + " mph";
+    coordinates.innerHTML = parseFloat(spd).toFixed(2) + " mph";
   });
   myLayer.on('mouseout', function(e) {
     coordinates.innerHTML = "";
