@@ -23,7 +23,7 @@ function MapLine(data) {
     this.mainLine.push(arr);
     
     if (j >=1) {
-      var distance = dist(this.mainLine[j-1], this.mainLine[j]);
+      // var distance = dist(this.mainLine[j-1], this.mainLine[j]);
     
       var ldPoint = data[j-1];
       var oldTime = new Date();
@@ -32,11 +32,9 @@ function MapLine(data) {
       newTime.setHours(dPoint.hour, dPoint.minute, dPoint.second);
 
       // var time = (newTime.getTime() - oldTime.getTime());
-      var time = (newTime.getTime() - oldTime.getTime())/1000;
+      var time = ((newTime.getTime() - oldTime.getTime())/(1000*60));
 
-      var R = 6371; // km
-      // var R = 3958.755866;
-
+      var R = 3958.755866; // miles
 
       var dLat = makeRad(data[j].lat-data[j-1].lat);
       var dLon =makeRad(data[j].lon-data[j-1].lon);
@@ -48,8 +46,6 @@ function MapLine(data) {
       var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
       var d = R * c;
 
-      d = d * 0.621371;
-
       // console.log("deeeeeeeee: " + d);
 
       // var speed = distance/time;
@@ -57,9 +53,9 @@ function MapLine(data) {
       var speed = d/time;
 
 
-      console.log("distance: " + distance);
-      console.log("time: " + time);
-      console.log("speed: " + speed);
+      // console.log("distance: " + distance);
+      // console.log("time: " + time);
+      // console.log("speed: " + speed);
       this.speedPoints.push(speed);
     } else {
       this.speedPoints.push(0);
@@ -150,8 +146,10 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint, scaleFa
   var aboveAngle = parseFloat((theta + this.pi()/2));
   var belowAngle = parseFloat((theta - this.pi()/2));
 
-  // var scale = speedPoint * .00005;
-  var scale = speedPoint * .0001;
+  // TODO need to determine how to calculate the scale!!!!
+  // var scale = speedPoint * .00001;
+  var scale = speedPoint * .00003;
+  // var scale = speedPoint * .0001;
   // var scale = scaleFactor(speedPoint);
   // console.log(scale);
     
