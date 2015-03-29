@@ -22,10 +22,10 @@
            border-radius:3px;
          }
         </style>
-        <!-- <script src="array.js"></script> -->
         <!-- <script src="riders/sean_craig/ride1.js"></script> -->
-        <script src="riders/sean_craig/ride2.js"></script>
-        <script src="one-line-to-two.js"></script>
+        <!-- <script src="riders/sean_craig/ride2.js"></script> -->
+        <script src="riders/sean_craig/ride3.js"></script>
+        <script src="lib/one-line-to-two.js"></script>
       </head>
       <body>
 
@@ -38,8 +38,8 @@ Jared Ruiz
    </th>
 <th>
 <h2>
-Jared Ruiz
-<br>Kick-Ass Rider
+Sean Craig
+<br>Sucky-Ass Rider
 </h2>
    </th>
 
@@ -55,6 +55,7 @@ Jared Ruiz
         <pre id='coordinates' class='ui-coordinates'></pre>
         <script>
   // TODO may be a good idea to pull all of this to an external file too...
+  // TODO lives in config/ ...how to read this?
   L.mapbox.accessToken = 'pk.eyJ1Ijoic3doYzEwNjYiLCJhIjoiS2xvdHlOOCJ9.AuwjSDNFKVae2_skfgLouA';
 
 var coordinates = document.getElementById('coordinates');
@@ -63,7 +64,6 @@ var coordinates = document.getElementById('coordinates');
 var map = L.mapbox.map('map', 'examples.map-i86nkdio');
 
 // make a MapLine object; this holds all necessary line info
-<!-- var ml = new MapLine(oldLine,  speedLine); -->
 var ml = new MapLine(dataArray);
 
 // center and zoom on map

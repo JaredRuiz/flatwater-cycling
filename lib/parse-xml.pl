@@ -22,22 +22,6 @@ $data = $xml->XMLin($ARGV[0]);
 # }
 
 ## use this for .gpx data
-
-# pulls out lat/long positions
-# foreach $e (@{$data->{trk}->{trkseg}->{trkpt}}) 
-# {
-#     print $e->{lat}, "\n";
-#     print $e->{lon}, "\n";
-# }
-
-
-
-# foreach $e (@{$data->{trk}->{trkseg}->{trkpt}}) 
-# {
-#     print $e->{time}, "time\n";
-# }
-
-
 print "[", "\n";
 foreach $e (@{$data->{trk}->{trkseg}->{trkpt}}) 
 {

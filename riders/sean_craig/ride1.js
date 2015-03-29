@@ -1,4 +1,4 @@
-var dataArray = [
+var dataArray1 = [
 { lat: 40.80435957759619,
 lon: -96.719063334167,
 hour: 13,

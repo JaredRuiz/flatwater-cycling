@@ -23,19 +23,19 @@ function MapLine(data) {
     this.mainLine.push(arr);
     
     if (j >=1) {
-      // var distance = dist(this.mainLine[j-1], this.mainLine[j]);
-    
+
+      // TODO this crap is weird and broken
       var ldPoint = data[j-1];
       var oldTime = new Date();
       oldTime.setHours(ldPoint.hour, ldPoint.minute, ldPoint.second);
       var newTime = new Date();
       newTime.setHours(dPoint.hour, dPoint.minute, dPoint.second);
 
-      // var time = (newTime.getTime() - oldTime.getTime());
+      // difference givs milliseconds - divide by 1000 for seconds and then
+      // 60 for hours
       var time = ((newTime.getTime() - oldTime.getTime())/(1000*60));
 
       var R = 3958.755866; // miles
-
       var dLat = makeRad(data[j].lat-data[j-1].lat);
       var dLon =makeRad(data[j].lon-data[j-1].lon);
       var lat1 = makeRad(data[j-1].lat);
@@ -48,10 +48,7 @@ function MapLine(data) {
 
       // console.log("deeeeeeeee: " + d);
 
-      // var speed = distance/time;
-
       var speed = d/time;
-
 
       // console.log("distance: " + distance);
       // console.log("time: " + time);
@@ -62,14 +59,6 @@ function MapLine(data) {
     }
     
   }
-
-  // for (var j = 0, max = linePoints.length; j < max; j++) {
-  //   this.mainLine.push(linePoints[j]);
-  // } // for
-
-  // for (var j = 0, max = speedPoints.length; j < max; j++) {
-  //   this.speedPoints.push(speedPoints[j]);
-  // } // for
 
   var minSpeed = Math.min.apply(null, this.speedPoints),
         maxSpeed = Math.max.apply(null, this.speedPoints);
@@ -147,11 +136,15 @@ MapLine.prototype.makeOnePointTwo = function(point1, point2, speedPoint, scaleFa
   var belowAngle = parseFloat((theta - this.pi()/2));
 
   // TODO need to determine how to calculate the scale!!!!
+
+  // TODO seems like this is not scaling correctly...
   // var scale = speedPoint * .00001;
   var scale = speedPoint * .00003;
-  // var scale = speedPoint * .0001;
+  // var scale = speedPoint * 1;
   // var scale = scaleFactor(speedPoint);
-  // console.log(scale);
+  console.log('scale: ' + scale);
+
+
     
   /// Compute points on this new line made by above angles, at
   /// distance 1 from origin
