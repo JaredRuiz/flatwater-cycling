@@ -22,94 +22,121 @@
            border-radius:3px;
          }
         </style>
-        <script src="array.js"></script>
-        <script src="one-line-to-two.js"></script>
+       <script src="riders/sean_craig/ride1.js"></script>
+        <script src="lib/one-line-to-two.js"></script>
       </head>
       <body>
+
         <div id='map'></div>
         <pre id='coordinates' class='ui-coordinates'></pre>
         <script>
-  // TODO may be a good idea to pull all of this to an external file too...
-  L.mapbox.accessToken = 'pk.eyJ1Ijoic3doYzEwNjYiLCJhIjoiS2xvdHlOOCJ9.AuwjSDNFKVae2_skfgLouA';
+ 
+// TODO may be a good idea to pull all of this to an external file too...
+// TODO lives in config/ ...how to read this?
+L.mapbox.accessToken = 'pk.eyJ1Ijoic3doYzEwNjYiLCJhIjoiS2xvdHlOOCJ9.AuwjSDNFKVae2_skfgLouA';
 
 var coordinates = document.getElementById('coordinates');
 
-// create a map object; second param gives style option for map
-var map = L.mapbox.map('map', 'examples.map-i86nkdio');
+// main function to add a line to a map
+// TODO: clean up in future!!
+var addLineToMap = function(mlObj, colorBool) {
+  for (var j = 0, max = mlObj.polygonPoints.pos.length; j < max; j++) {
+    // make a geojson object out of the polygon; this allows us to easily access 
+    // the speed associated with each polygon, and to add it to the map
+    var poly = L.polygon(mlObj.polygonPoints.pos[j]),
+    geojson = poly.toGeoJSON();
+    
+    // attach the speed to the geojson object (displays speed when we scroll over)
+    var speed = mlObj.polygonPoints.speed[j];
+    geojson.properties.speed = speed;
+    
+    // add the geojson to the map as a featureLayer
+    var myLayer = L.mapbox.featureLayer(geojson)
+
+
+//                     !!!!!!!!!!!!!!!!!!!!!!!SEAN!!!!!!!!!!!!!!!!!!!!!!!!
+//                     !!!!!!!!!!!!!!!!!!!!!!!SEAN!!!!!!!!!!!!!!!!!!!!!!!!
+//                     !!!!!!!!!!!!!!!!!!!!!!!SEAN!!!!!!!!!!!!!!!!!!!!!!!!
+//                     !!!!!!!!!!!!!!!!!!!!!!!SEAN!!!!!!!!!!!!!!!!!!!!!!!!
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+///////////////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////
+////////////////////////
+//////////////////
+///////////
+/////
+// Sean, 
+//   This is how you style the line:
+//   see my comments below for help!
+
+    // TODO add this into its own file...
+    var style = {};
+    var cColor;
+    // choose a different color/shade depending upon speed
+    if (parseInt(speed, 10) <= 3) {
+       cColor = colorBool ? '#8B0C7D' : '#999996';
+    } else if (parseInt(speed, 10) <= 5) {
+       cColor = colorBool ? '#B327A3' : '#B3B2B1';
+    } else if (parseInt(speed, 10) <= 9) {
+       cColor = colorBool ? '#DF3BCB' : '#BABAB8';
+    } else if (parseInt(speed, 10) <= 12) {
+       cColor = colorBool ? '#DC64CE' : '#C4C4C4';
+    } else if (parseInt(speed, 10) <= 15) {
+       cColor = colorBool ? '#D250C3' : '#DEDEDC';
+    } else {
+       cColor = colorBool ? '#FA9FEF' : '#EBEAE8';
+    }
+    style ={ 
+      // interior of the line 
+      // fillColor: '#FF00FB',
+      fillColor:  cColor,
+      
+      // line borders
+      // color:
+      color: cColor,
+      // thickness (1 is way too thick... .5 maybe too this though)
+      weight: .5
+    };
+    myLayer.setStyle(style).addTo(map);
+
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+// DONT LOOK PAST THIS!! FOR JARED'S EYES ONLY!!!!!!!!!!!!!
+
+    // update speed on mouseover
+    myLayer.on('mouseover', function(e) {
+      var spd = this.getGeoJSON().properties.speed;
+      coordinates.innerHTML = parseFloat(spd).toFixed(2) + " mph";
+    });
+    myLayer.on('mouseout', function(e) {
+      coordinates.innerHTML = "";
+    });
+  }
+};
+
+// create a map object; first param matches div above; second param gives style option for map
+var map = L.mapbox.map('map', 'swhc1066.7f8cd394');
 
 // make a MapLine object; this holds all necessary line info
-var ml = new MapLine(oldLine,  speedLine);
+var line1 = new MapLine(dataArray1);
+// var line2 = new MapLine(dataArray2);
+// var line3 = new MapLine(dataArray3);
+// var line5 = new MapLine(dataArray5);
+// var line6 = new MapLine(dataArray6);
 
 // center and zoom on map
 map.fitBounds([
-	[ml.south(), ml.west()],
-	[ml.north(), ml.east()],
+	[line1.south(), line1.west()],
+	[line1.north(), line1.east()],
 ]);
 
-for (var j = 0, max = ml.polygonPoints.pos.length; j < max; j++) {
-  // make a geojson object out of the polygon; this allows us to easily access 
-  // the speed associated with each polygon, and to add it to the map
-  var poly = L.polygon(ml.polygonPoints.pos[j]),
-  geojson = poly.toGeoJSON();
-  // attach the speed to the geojson object
-  var speed = ml.polygonPoints.speed[j];
-  geojson.properties.speed = speed;
-  
-  // add the geojson to the map as a featureLayer
-  var myLayer = L.mapbox.featureLayer(geojson)
-  // style options for line: changing the color based off of the 
-  // speed (will enhance in future)
-  var style = {};
-      if (parseInt(speed, 10) <= 3) {
-        style ={ 
-          // color of interior of polygon
-          fillColor: '#8B0C7D',
-          // color of edge/border of polygon
-          color: '#8B0C7',
-          weight: .5
-        };
-      } else if (parseInt(speed, 10) <= 5) {
-       style ={ 
-         fillColor: '#B327A3',
-         color: '#B327A3',
-         weight: .5
-       };
-      } else if (parseInt(speed, 10) <= 9) {
-       style ={ 
-         fillColor: '#DF3BCB',
-         color: '#DF3BCB',
-         weight: .5
-       };
-      } else if (parseInt(speed, 10) <= 12) {
-       style ={ 
-         fillColor: '#DC64CE',
-         color: '#DC64CE',
-         weight: .5
-       };
-      } else if (parseInt(speed, 10) <= 15) {
-       style ={ 
-         fillColor: '#D250C3',
-         color: '#D250C3',
-         weight: .5
-       };
-      } else {
-        style ={ 
-          fillColor: '#FA9FEF',
-          color: '#FA9FEF',
-          weight: .5
-        };
-      }
-  myLayer.setStyle(style).addTo(map);
-
-  // update speed on mouseover
-  myLayer.on('mouseover', function(e) {
-    var spd = this.getGeoJSON().properties.speed;
-    coordinates.innerHTML = spd + " mph";
-  });
-  myLayer.on('mouseout', function(e) {
-    coordinates.innerHTML = "";
-  });
-}
+addLineToMap(line1, true);
+// addLineToMap(line2, true);
+// addLineToMap(line3, true);
+// addLineToMap(line5, true);
+// addLineToMap(line6, true);
 
 </script>
       </body>
