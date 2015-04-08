@@ -22,7 +22,7 @@ $data = $xml->XMLin($ARGV[0]);
 # }
 
 ## use this for .gpx data
-print "[", "\n";
+print "var dataArray1 = [", "\n";
 foreach $e (@{$data->{trk}->{trkseg}->{trkpt}}) 
 {
     print "{ ";

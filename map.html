@@ -23,8 +23,6 @@
          }
         </style>
        <script src="riders/sean_craig/ride1.js"></script>
-        <script src="riders/sean_craig/ride2.js"></script>
-        <script src="riders/sean_craig/ride3.js"></script>
         <script src="lib/one-line-to-two.js"></script>
       </head>
       <body>
@@ -54,13 +52,31 @@ var addLineToMap = function(mlObj, colorBool) {
     
     // add the geojson to the map as a featureLayer
     var myLayer = L.mapbox.featureLayer(geojson)
-    // style options for line: changing the color based off of the 
-    // speed (will enhance in future)
+
+
+//                     !!!!!!!!!!!!!!!!!!!!!!!SEAN!!!!!!!!!!!!!!!!!!!!!!!!
+//                     !!!!!!!!!!!!!!!!!!!!!!!SEAN!!!!!!!!!!!!!!!!!!!!!!!!
+//                     !!!!!!!!!!!!!!!!!!!!!!!SEAN!!!!!!!!!!!!!!!!!!!!!!!!
+//                     !!!!!!!!!!!!!!!!!!!!!!!SEAN!!!!!!!!!!!!!!!!!!!!!!!!
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+///////////////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////
+////////////////////////
+//////////////////
+///////////
+/////
+// Sean, 
+//   This is how you style the line:
+//   see my comments below for help!
+
     // TODO add this into its own file...
     var style = {};
     var cColor;
+    // choose a different color/shade depending upon speed
     if (parseInt(speed, 10) <= 3) {
-       cColor = colorBool ? '#8B0C7' : '#999996';
+       cColor = colorBool ? '#8B0C7D' : '#999996';
     } else if (parseInt(speed, 10) <= 5) {
        cColor = colorBool ? '#B327A3' : '#B3B2B1';
     } else if (parseInt(speed, 10) <= 9) {
@@ -72,13 +88,22 @@ var addLineToMap = function(mlObj, colorBool) {
     } else {
        cColor = colorBool ? '#FA9FEF' : '#EBEAE8';
     }
-    console.log(cColor);
     style ={ 
-      fillColor: cColor,
+      // interior of the line 
+      // fillColor: '#FF00FB',
+      fillColor:  cColor,
+      
+      // line borders
+      // color:
       color: cColor,
+      // thickness (1 is way too thick... .5 maybe too this though)
       weight: .5
     };
     myLayer.setStyle(style).addTo(map);
+
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+// DONT LOOK PAST THIS!! FOR JARED'S EYES ONLY!!!!!!!!!!!!!
 
     // update speed on mouseover
     myLayer.on('mouseover', function(e) {
@@ -92,12 +117,14 @@ var addLineToMap = function(mlObj, colorBool) {
 };
 
 // create a map object; first param matches div above; second param gives style option for map
-var map = L.mapbox.map('map', 'examples.map-i86nkdio');
+var map = L.mapbox.map('map', 'swhc1066.7f8cd394');
 
 // make a MapLine object; this holds all necessary line info
 var line1 = new MapLine(dataArray1);
-var line2 = new MapLine(dataArray2);
-var line3 = new MapLine(dataArray3);
+// var line2 = new MapLine(dataArray2);
+// var line3 = new MapLine(dataArray3);
+// var line5 = new MapLine(dataArray5);
+// var line6 = new MapLine(dataArray6);
 
 // center and zoom on map
 map.fitBounds([
@@ -106,8 +133,10 @@ map.fitBounds([
 ]);
 
 addLineToMap(line1, true);
-addLineToMap(line2, true);
-addLineToMap(line3, false);
+// addLineToMap(line2, true);
+// addLineToMap(line3, true);
+// addLineToMap(line5, true);
+// addLineToMap(line6, true);
 
 </script>
       </body>
