@@ -194,5 +194,107 @@ describe("MapLine", function() {
 
   });
 
-});
+  describe("#_determineScale", function() {
 
+    // TODO make better tests here..
+    it('should return a value', function() {
+
+      // var p = { lat: 40.804801220074296,
+      //           lon: -96.71633628197014,
+      //           hour: 13,
+      //           minute: 28,
+      //           second: 16
+      //         },
+      //       q = { lat: 40.804806081578135,
+      //             lon: -96.7161178495735,
+      //             hour: 13,
+      //             minute: 28,
+      //             second: 19
+      //           }, 
+
+var p ={ lat: 40.80435957759619,
+lon: -96.719063334167,
+hour: 13,
+minute: 26,
+second: 48
+},
+q = { lat: 40.80436117015779,
+lon: -96.71903030946851,
+hour: 13,
+minute: 26,
+second: 50
+},
+      scale = ml._determineScale(p, q, 'speed');
+
+      should.exist(scale);
+      isNaN(scale).should.equal(false);
+      scale.should.equal(3.5605273941626887);
+    });
+
+  });
+
+describe("#_combnePointsIntoLine", function() {
+    it('should return a value', function() {
+      var p = { lat: 40.804801220074296,
+                lon: -96.71633628197014,
+                hour: 13,
+                minute: 28,
+                second: 16
+              },
+            q = { lat: 40.804806081578135,
+                  lon: -96.7161178495735,
+                  hour: 13,
+                  minute: 28,
+                  second: 19
+                },
+           line = ml._combinePointsIntoLine(p, q, 'speed');
+
+      line.tail.x.should.equal(p.lat);
+      line.tail.y.should.equal(p.lon);
+      line.head.x.should.equal(q.lat);
+      line.head.y.should.equal(q.lon);
+    });
+  });
+
+
+  describe("#_drawLine", function() {
+    it('should return polygons and a scale', function() {
+      var data =  [ 
+        { lat: 40.804886212572455,
+          lon: -96.71719626523554,
+          hour: 13,
+          minute: 27,
+          second: 59
+        },
+        { lat: 40.80485017038882,
+          lon: -96.71713256277144,
+          hour: 13,
+          minute: 28,
+          second: 1
+        },
+        { lat: 40.804840195924044,
+          lon: -96.71710590831935,
+          hour: 13,
+          minute: 28,
+          second: 2
+        },
+        { lat: 40.80482234247029,
+          lon: -96.71701974235475,
+          hour: 13,
+          minute: 28,
+          second: 5
+        }
+      ],
+      lineObject = ml._drawLine(data, 'speed');
+
+      should.exist(lineObject);
+      lineObject.length.should.equal(3);
+      lineObject.forEach(function(line) {
+        line.poly.length.should.equal(4);
+        should.exist(line.scale);
+      });
+
+    });
+  });
+
+});

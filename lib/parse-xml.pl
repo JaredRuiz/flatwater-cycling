@@ -26,17 +26,17 @@ print "var dataArray1 = [", "\n";
 foreach $e (@{$data->{trk}->{trkseg}->{trkpt}}) 
 {
     print "{ ";
-    print "lat: ", $e->{lat}, ",", "\n";
-    print "lon: ", $e->{lon}, ",", "\n";
+    print "lat: '", $e->{lat}, "',", "\n";
+    print "lon: '", $e->{lon}, "',", "\n";
 
     # regexp to get hour:minute:second out of time
     my $time = $e->{time};
     my ($year, $month, $day, $hour, $min, $sec) = $time =~ /^(\d\d\d\d)-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)/;
 
     # use some regexp to just get the seconds portion
-    print "hour: ", $hour, ",", "\n";
-    print "minute: ", $min, ",", "\n";
-    print "second: ", $sec, "\n";
+    print "hour: '", $hour, "',", "\n";
+    print "minute: '", $min, "',", "\n";
+    print "second: '", $sec, "'\n";
     print "},", "\n";
 }
 print "];", "\n";
