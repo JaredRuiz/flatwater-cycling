@@ -22,46 +22,43 @@
            border-radius:3px;
          }
         </style>
-       // <script src="riders/sean_craig/ride1.js"></script>
-       <script src="riders/sean_craig/new_ride.js"></script>
+        <script src="riders/sean_craig/new_ride2.js"></script>
+       <!-- <script src="riders/sean_craig/new_ride.js"></script> -->
         <script src="lib/draw-line.js"></script>
       </head>
       <body>
 
         <div id='map'></div>
-        // <pre id='coordinates' class='ui-coordinates'></pre>
+        <pre id='coordinates' class='ui-coordinates'></pre>
         <script>
  
 // TODO may be a good idea to pull all of this to an external file too...
 // TODO lives in config/ ...how to read this?
 L.mapbox.accessToken = 'pk.eyJ1Ijoic3doYzEwNjYiLCJhIjoiS2xvdHlOOCJ9.AuwjSDNFKVae2_skfgLouA';
 
-// var coordinates = document.getElementById('coordinates');
+var coordinates = document.getElementById('coordinates');
 
 // main function to add a line to a map
-// TODO: clean up in future!!
 var addLineToMap = function(line, colorBool) {
 
   console.log(line.length);
+  // console.log(line[0].poly);
+  // console.log(line[1].poly);
+  // console.log(line[2].poly);
+  // console.log(line[3].poly);
 
   for (var j = 0, max = line.length; j < max; j++) {
 
 
-    console.log(j);
+    // console.log(j);
 
-    console.log(line[j]);
+    // console.log(line[j]);
 
 
     // make a geojson object out of the polygon; this allows us to easily access 
     // the speed associated with each polygon, and to add it to the map
     var poly = L.polygon(line[j].poly),
     geojson = poly.toGeoJSON();
-
-    
-
-
-
-
     
     // attach the speed to the geojson object (displays speed when we scroll over)
     var speed = line[j].scale;
@@ -101,13 +98,13 @@ var addLineToMap = function(line, colorBool) {
     myLayer.setStyle(style).addTo(map);
 
     // update speed on mouseover
-    // myLayer.on('mouseover', function(e) {
-    //   var spd = this.getGeoJSON().properties.speed;
-    //   coordinates.innerHTML = parseFloat(spd).toFixed(2) + " mph";
-    // });
-    // myLayer.on('mouseout', function(e) {
-    //   coordinates.innerHTML = "";
-    // });
+    myLayer.on('mouseover', function(e) {
+      var spd = this.getGeoJSON().properties.speed;
+      coordinates.innerHTML = parseFloat(spd).toFixed(2) + " mph";
+    });
+    myLayer.on('mouseout', function(e) {
+      coordinates.innerHTML = "";
+    });
 
   }
 };
@@ -116,25 +113,13 @@ var addLineToMap = function(line, colorBool) {
 var map = L.mapbox.map('map', 'swhc1066.7f8cd394');
 
 // make a MapLine object; this holds all necessary line info
-var map_line = new MapLine();
-var line1 = map_line.drawLine(dataArray1, 'speed');
-
-// var line2 = new MapLine(dataArray2);
-// var line3 = new MapLine(dataArray3);
-// var line5 = new MapLine(dataArray5);
-// var line6 = new MapLine(dataArray6);
-
-// center and zoom on map
-// map.fitBounds([
-// 	[line1.south(), line1.west()],
-// 	[line1.north(), line1.east()],
-// ]);
+var map_line = new MapLine(dataArray1);
+var line1 = map_line.drawLine();
 
 addLineToMap(line1, true);
-// addLineToMap(line2, true);
-// addLineToMap(line3, true);
-// addLineToMap(line5, true);
-// addLineToMap(line6, true);
+
+// center and zoom on map
+map.fitBounds(map_line.fitBounds());
 
 </script>
       </body>

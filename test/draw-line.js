@@ -10,12 +10,12 @@ describe("MapLine", function() {
        ml = new oneLine.MapLine();
 
   describe("#makeRad", function() {
-    it("should round to no more than 4 digits", function() {
-      ml.makeRad(0.12345).should.equal(0.1235);
+    it("should round to no more than 6 digits", function() {
+      ml.makeRad(0.1234567).should.equal(0.123457);
     });
 
     it("should convert negative 0 to 0", function() {
-      ml.makeRad(-0).should.equal(0.0000);
+      ml.makeRad(-0).should.equal(0.000000);
     });
 
     it("should do nothing to integers", function() {
@@ -106,6 +106,20 @@ describe("MapLine", function() {
     });
   });
 
+  describe("#makeCartesianPointFromPolar", function() {
+    it('should be the inverse of makePolarPointFromCartesian', function() {
+
+      var cartesian = { x: 12, y: 123 },
+            newCartesian = ml.makeCartesianPointFromPolar(ml.makePolarPointFromCartesian(cartesian));
+
+      newCartesian.x.should.equal(cartesian.x);
+      newCartesian.y.should.equal(cartesian.y);
+
+
+    });
+
+  });
+
   describe("#getAbovePoint", function() {
     it("should rotate by pi/2 radians", function() {
       var initialPoint = { r: 1, theta: 0 },
@@ -188,6 +202,45 @@ describe("MapLine", function() {
 
       pLines.belowLine.head.x.should.equal(2);
       pLines.belowLine.head.y.should.equal(1);
+    });
+
+    it('should give points close to the original points', function() {
+
+      var p ={ lat: '40.80435957759619',
+               lon: '-96.719063334167',
+               hour: '13',
+               minute: '26',
+               second: '48'
+             },
+      q = { lat: '40.80436117015779',
+            lon: '-96.71903030946851',
+            hour: '13',
+            minute: '26',
+            second: '50'
+          },
+      scale = ml._determineScale(p, q, 'speed'),
+      line = ml._combinePointsIntoLine(p, q),
+      pLines = ml._makeParallelLines(line, scale);
+
+      pLines.aboveLine.tail.x.should.equal(40.804359);
+      pLines.aboveLine.tail.y.should.equal(40.804359);
+      pLines.aboveLine.head.x.should.equal(40.804359);
+      pLines.aboveLine.head.y.should.equal(40.804359);
+
+
+      pLines.belowLine.tail.x.should.equal(40.804359);
+      pLines.belowLine.tail.y.should.equal(40.804359);
+
+
+      pLines.aboveLine.tail.x.should.equal(40.804359);
+      pLines.aboveLine.tail.x.should.equal(40.804359);
+      pLines.aboveLine.tail.x.should.equal(40.804359);
+      pLines.aboveLine.tail.x.should.equal(40.804359);
+
+      
+      // scale = ml._determineScale(p, q, 'speed');
+
+
 
 
     });
@@ -198,19 +251,6 @@ describe("MapLine", function() {
 
     // TODO make better tests here..
     it('should return a value', function() {
-
-      // var p = { lat: 40.804801220074296,
-      //           lon: -96.71633628197014,
-      //           hour: 13,
-      //           minute: 28,
-      //           second: 16
-      //         },
-      //       q = { lat: 40.804806081578135,
-      //             lon: -96.7161178495735,
-      //             hour: 13,
-      //             minute: 28,
-      //             second: 19
-      //           }, 
 
 var p ={ lat: 40.80435957759619,
 lon: -96.719063334167,
@@ -228,12 +268,11 @@ second: 50
 
       should.exist(scale);
       isNaN(scale).should.equal(false);
-      scale.should.equal(3.5605273941626887);
     });
 
   });
 
-describe("#_combnePointsIntoLine", function() {
+describe("#_combinePointsIntoLine", function() {
     it('should return a value', function() {
       var p = { lat: 40.804801220074296,
                 lon: -96.71633628197014,
