@@ -16,19 +16,9 @@ describe("MapLine", function() {
   }
 
 
-  var makeRad = function(num) {
-    num = parseFloat(num).toFixed(4);
-    num = (num === "-0.0000") ? "0.0000" : num;
-    return num;
-  } // makeRad
+  
 
 var pi = parseFloat(makeRad(Math.PI));
-
- //  var roundToTwo =  function(num) {    
-//     num = parseFloat(num+"e+2");
- 
-//   return +(Math.round(num)  + "e-2");
-// }
 
 
   describe("makeOnePointTwo", function() {
@@ -40,6 +30,7 @@ var pi = parseFloat(makeRad(Math.PI));
     //   var abovePoint1 = [point1[0] + tempAbovePoint[0] -1, point1[1] + tempAbovePoint[1]];
     //   var belowPoint1 = [point1[0] + tempBelowPoint[0]-1, point1[1] + tempBelowPoint[1]];
     // });
+
 
 
     it("angles the coordinate axes should work correctly", function() {

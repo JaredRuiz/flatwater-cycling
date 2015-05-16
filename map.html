@@ -22,7 +22,8 @@
            border-radius:3px;
          }
         </style>
-       <script src="riders/sean_craig/ride1.js"></script>
+       <!-- <script src="riders/sean_craig/ride1.js"></script> -->
+       <script src="riders/sean_craig/old_ride2.js"></script>
         <script src="lib/one-line-to-two.js"></script>
       </head>
       <body>
@@ -40,7 +41,19 @@ var coordinates = document.getElementById('coordinates');
 // main function to add a line to a map
 // TODO: clean up in future!!
 var addLineToMap = function(mlObj, colorBool) {
+
+  // console.log(mlObj.polygonPoints.pos.length);
+  // console.log(mlObj.polygonPoints.pos[0]);
+  // console.log(mlObj.polygonPoints.pos[1]);
+  // console.log(mlObj.polygonPoints.pos[2]);
+  // console.log(mlObj.polygonPoints.pos[3]);
+
   for (var j = 0, max = mlObj.polygonPoints.pos.length; j < max; j++) {
+
+
+
+
+
     // make a geojson object out of the polygon; this allows us to easily access 
     // the speed associated with each polygon, and to add it to the map
     var poly = L.polygon(mlObj.polygonPoints.pos[j]),
@@ -126,17 +139,23 @@ var line1 = new MapLine(dataArray1);
 // var line5 = new MapLine(dataArray5);
 // var line6 = new MapLine(dataArray6);
 
-// center and zoom on map
-map.fitBounds([
-	[line1.south(), line1.west()],
-	[line1.north(), line1.east()],
-]);
-
 addLineToMap(line1, true);
 // addLineToMap(line2, true);
 // addLineToMap(line3, true);
 // addLineToMap(line5, true);
 // addLineToMap(line6, true);
+
+// center and zoom on map
+console.log([
+	[line1.south(), line1.west()],
+	[line1.north(), line1.east()],
+]);
+
+
+map.fitBounds([
+	[line1.south(), line1.west()],
+	[line1.north(), line1.east()],
+]);
 
 </script>
       </body>
