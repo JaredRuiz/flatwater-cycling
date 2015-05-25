@@ -23,7 +23,9 @@
          }
         </style>
        <script src="riders/sean_craig/ride1.js"></script>
-       <script src="riders/sean_craig/ride2.js"></script>
+       <script src="riders/sean_craig/ride2.js"></script
+      <script src="riders/sean_craig/ride5.js"></script>
+       <script src="riders/sean_craig/ride6.js"></script>/
         <script src="lib/one-line-to-two.js"></script>
       </head>
       <body>
@@ -85,10 +87,6 @@ var addLinesToMap = function(linesArr, colorBool) {
       };
       myLayer.setStyle(style).addTo(map);
 
-      //////////////////////////////////////////////////////////
-      //////////////////////////////////////////////////////////
-      // DONT LOOK PAST THIS!! FOR JARED'S EYES ONLY!!!!!!!!!!!!!
-
       // update speed on mouseover
       myLayer.on('mouseover', function(e) {
         var spd = this.getGeoJSON().properties.speed;
@@ -101,28 +99,31 @@ var addLinesToMap = function(linesArr, colorBool) {
   });
 };
 
-// create a map object; first param matches div above; second param gives style option for map
-var map = L.mapbox.map('map', 'swhc1066.7f8cd394');
-
 // make a MapLine object; this holds all necessary line info
 var lines = [];
 
 var line1 = new MapLine(dataArray1);
- var line2 = new MapLine(dataArray2);
-// var line3 = new MapLine(dataArray3);
+var line2 = new MapLine(dataArray2);
 // var line5 = new MapLine(dataArray5);
-// var line6 = new MapLine(dataArray6);
+var line6 = new MapLine(dataArray6);
 
 lines.push(line1);
-lines.push(line2);
+// lines.push(line2);
+// lines.push(line5);
+lines.push(line6);
 
 var bounds = getLineBounds(lines);
 
-// center and zoom on map
-map.fitBounds([
+var mapBoxBounds = [
 	[bounds.south, bounds.west],
-	[bounds.north, bounds.east],
-]);
+	[bounds.north, bounds.east]
+];
+
+// create a map object; first param matches div above; second param gives style option for map
+var map = L.mapbox.map('map', 'swhc1066.7f8cd394');
+
+// center and zoom on map
+map.fitBounds(mapBoxBounds);
 
 addLinesToMap(lines, true);
 
